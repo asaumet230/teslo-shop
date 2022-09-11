@@ -7,7 +7,8 @@ import { Box, Grid, Typography, Button, Chip } from "@mui/material";
 import { ShopLayout } from "../../components/layouts";
 
 // Components:
-import { ProductSlideShow } from '../../components/products';
+import { ProductSlideShow, SizeSelector } from '../../components/products';
+import { ItemCounter } from "../../components/ui";
 
 
 // Example Data:
@@ -34,7 +35,10 @@ export const slug: NextPage = () => {
 
                         <Box sx={{ my: 2 }}>
                             <Typography variant='subtitle2'>Cantidad</Typography>
-                            {/* /TODO: ItemCounter */}
+                            <ItemCounter />
+                            <SizeSelector
+                                // selectedSize={product.sizes[0]} 
+                                sizes={product.sizes} />
                         </Box>
 
                         <Button color='secondary' className='circular-btn'>
