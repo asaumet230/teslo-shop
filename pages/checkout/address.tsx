@@ -63,7 +63,7 @@ export const AddressPage: NextPage = () => {
 
             <Box display='flex' justifyContent='center' marginTop={4}>
                 <Button color='secondary' size='large' className='circular-btn' sx={{ width: '300px' }}>
-                    Pagar
+                    Revisar pedido
                 </Button>
             </Box>
 
