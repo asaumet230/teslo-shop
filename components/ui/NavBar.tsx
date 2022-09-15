@@ -10,8 +10,8 @@ import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
 export const NavBar: FC = () => {
 
     return (
-        <AppBar>
-            <Toolbar>
+        <AppBar sx={{ borderBottom: '1px solid #f2f2f2', paddingBottom: 0 }}>
+            <Toolbar >
                 <NextLink href="/" passHref>
                     <Link display="flex" alignItems="center">
                         <Typography variant="h6"> Teslo | </Typography>
