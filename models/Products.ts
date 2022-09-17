@@ -62,6 +62,10 @@ const ProductSchema = new Schema({
     timestamps: true //* Esto agrega las fechas de creación y actualización en mongo
 });
 
+
+//* Para Habilitar la busqueda: 
+ProductSchema.index({ title: 'text', tags: 'text' });
+
 const ProductModel: Model<IProducts> = mongoose.models.Product || model('Product', ProductSchema); //* O busca el modelo o lo crea por el nombre Product
 
 export default ProductModel;
