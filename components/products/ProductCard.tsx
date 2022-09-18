@@ -17,8 +17,6 @@ import {
 // Interfaces:
 import { IProducts } from '../../interfaces';
 
-
-
 interface Props {
     product: IProducts;
 }
@@ -30,7 +28,7 @@ export const ProductCard: FC<Props> = ({ product }) => {
 
     const productImage = useMemo(() => {
 
-        return isHovered ? `products/${product.images[1]}` : `products/${product.images[0]}`;
+        return isHovered ? `/products/${product.images[1]}` : `/products/${product.images[0]}`;
 
     }, [isHovered, product.images]);
 

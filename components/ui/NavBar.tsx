@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { useRouter } from 'next/router';
 import NextLink from "next/link";
 
 // MUI:
@@ -7,7 +8,26 @@ import { AppBar, Badge, Box, Button, IconButton, Link, Toolbar, Typography } fro
 // Icons:
 import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
 
+
+const menuItem = [
+    {
+        text: 'Hombres',
+        url: '/category/mens'
+    },
+    {
+        text: 'Mujeres',
+        url: '/category/women'
+    },
+    {
+        text: 'Niños',
+        url: '/category/kids'
+    }
+];
+
+
 export const NavBar: FC = () => {
+
+    const { asPath } = useRouter();
 
     return (
         <AppBar sx={{ borderBottom: '1px solid #f2f2f2', paddingBottom: 0 }}>
@@ -22,22 +42,17 @@ export const NavBar: FC = () => {
                 <Box sx={{ flex: 1 }}></Box>
 
 
-                <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-                    <NextLink href="/category/men" passHref>
-                        <Link>
-                            <Button>Hombres</Button>
-                        </Link>
-                    </NextLink>
-                    <NextLink href="/category/women" passHref>
-                        <Link>
-                            <Button>Mujeres</Button>
-                        </Link>
-                    </NextLink>
-                    <NextLink href="/category/kid" passHref>
-                        <Link>
-                            <Button>Niños</Button>
-                        </Link>
-                    </NextLink>
+                <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+
+                    {
+                        menuItem.map(({ text, url }) => (
+                            <NextLink key={url} href={url} passHref>
+                                <Link>
+                                    <Button sx={{ marginX: 1 }} color={asPath === url ? 'primary' : 'info'}>{text}</Button>
+                                </Link>
+                            </NextLink>
+                        ))
+                    }
                 </Box>
 
 
@@ -62,7 +77,7 @@ export const NavBar: FC = () => {
                 </Button>
 
             </Toolbar>
-        </AppBar>
+        </AppBar >
     )
 }
 
