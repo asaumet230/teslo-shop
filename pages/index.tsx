@@ -1,18 +1,22 @@
 import type { NextPage } from 'next';
+
 import { Typography } from '@mui/material';
 
 //Components:
 import { ShopLayout } from '../components/layouts';
 import { ProductList } from '../components/products';
+import { FullScreenLoading } from '../components/ui';
 
+// Hooks:
+import { useProducts } from '../hooks';
 
-// Data:
+//? Data To Design Frontend:
 import { initialData } from '../database/products';
-
 
 
 const HomePage: NextPage = () => {
 
+  const { products, isLoading } = useProducts('products');
 
   return (
     <ShopLayout
@@ -22,7 +26,9 @@ const HomePage: NextPage = () => {
       <Typography variant='h1' component='h1'>Tienda</Typography>
       <Typography variant='h2' sx={{ marginBottom: '1px' }}>Todos los productos</Typography>
 
-      <ProductList products={initialData.products} />
+      {
+        isLoading ? (<FullScreenLoading />) : (<ProductList products={products} />)
+      }
 
     </ShopLayout>
 

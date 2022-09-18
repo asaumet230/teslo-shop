@@ -1,4 +1,12 @@
 
+export interface IResponse {
+    message: string;
+    product?: IProducts;
+    products?: IProducts[] | [];
+    total?: number;
+}
+
+
 export interface IProducts {
     _id?: string;
     description: string;
@@ -11,8 +19,8 @@ export interface IProducts {
     title: string;
     type: IType;
     gender: 'men' | 'women' | 'kid' | 'unisex';
-    createdAt: string;
-    updatedAt: string;
+    createdAt?: string;
+    updatedAt?: string;
 }
 
 export type ISize = 'XS' | 'S' | 'M' | 'L' | 'XL' | 'XXL' | 'XXXL';
