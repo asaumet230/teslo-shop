@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app';
+import { SWRConfig } from 'swr';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 
 // Themes:
@@ -6,7 +7,9 @@ import { lightTheme } from '../themes';
 
 //Styles:
 import '../styles/globals.css';
-import { SWRConfig } from 'swr';
+
+// Providers:
+import { UiProvider } from '../context/';
 
 function MyApp({ Component, pageProps }: AppProps) {
 
@@ -15,10 +18,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     <SWRConfig value={{
       fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
     }}>
-      <ThemeProvider theme={lightTheme} >
-        <CssBaseline />
-        <Component {...pageProps} />
-      </ThemeProvider>
+      <UiProvider>
+        <ThemeProvider theme={lightTheme} >
+          <CssBaseline />
+          <Component {...pageProps} />
+        </ThemeProvider>
+      </UiProvider>
     </SWRConfig>
   )
 

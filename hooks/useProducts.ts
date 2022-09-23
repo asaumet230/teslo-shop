@@ -12,6 +12,8 @@ export const useProducts = (url: string, config?: SWRConfiguration) => {
 
     return {
         products: data?.products || [],
+        product: data?.product,
+        message: data?.message,
         isLoading: !data && !error,
         isError: error
     }

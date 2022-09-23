@@ -40,7 +40,7 @@ const getProductBySlug = async (req: NextApiRequest, res: NextApiResponse) => {
         const product = await Product.findOne({ slug }).lean();
         await db.disconnect();
 
-        if (!product) return res.status(400).json({ message: `El producto ${slug} no existe` });
+        if (!product) return res.status(200).json({ message: `El producto ${slug} no existe` });
 
         return res.status(200).json({
             message: 'Consulta exitosa',
