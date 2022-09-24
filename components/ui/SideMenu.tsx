@@ -1,32 +1,19 @@
 import { useContext, useState } from "react";
 import { useRouter } from "next/router";
-import {
-    Box,
-    Divider,
-    Drawer,
-    IconButton,
-    Input,
-    InputAdornment,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
-    ListSubheader
-} from "@mui/material";
+import { Box, Divider, Drawer, IconButton, Input, InputAdornment, List, ListItem, ListItemIcon, ListItemText, ListSubheader } from "@mui/material";
 
+// Material Icons:
+import AccountCircleOutlined from '@mui/icons-material/AccountCircleOutlined';
+import AdminPanelSettings from '@mui/icons-material/AdminPanelSettings';
+import CategoryOutlined from '@mui/icons-material/CategoryOutlined';
+import ConfirmationNumberOutlined from '@mui/icons-material/ConfirmationNumberOutlined';
+import EscalatorWarningOutlined from '@mui/icons-material/EscalatorWarningOutlined';
+import FemaleOutlined from '@mui/icons-material/FemaleOutlined';
+import LoginOutlined from '@mui/icons-material/LoginOutlined';
+import MaleOutlined from '@mui/icons-material/MaleOutlined';
+import SearchOutlined from '@mui/icons-material/SearchOutlined';
+import VpnKeyOutline from '@mui/icons-material/VpnKeyOutlined';
 
-import {
-    AccountCircleOutlined,
-    AdminPanelSettings,
-    CategoryOutlined,
-    ConfirmationNumberOutlined,
-    EscalatorWarningOutlined,
-    FemaleOutlined,
-    LoginOutlined,
-    MaleOutlined,
-    SearchOutlined,
-    VpnKeyOutlined
-} from "@mui/icons-material";
 
 // Contexts:
 import { UiContext } from "../../context";
@@ -54,7 +41,6 @@ export const SideMenu = () => {
 
     return (
         <Drawer
-
             open={isMenuOpen}
             onClose={toggleSideMenu}
             anchor='right'
@@ -66,6 +52,7 @@ export const SideMenu = () => {
 
                     <ListItem>
                         <Input
+                            autoFocus={true}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && onSearchTerm()}
@@ -122,7 +109,7 @@ export const SideMenu = () => {
 
                     <ListItem button>
                         <ListItemIcon>
-                            <VpnKeyOutlined />
+                            <VpnKeyOutline />
                         </ListItemIcon>
                         <ListItemText primary={'Ingresar'} />
                     </ListItem>

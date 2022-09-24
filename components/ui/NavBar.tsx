@@ -1,12 +1,14 @@
-import { FC, useContext } from 'react';
+import { FC, useContext, useState } from 'react';
 import { useRouter } from 'next/router';
 import NextLink from "next/link";
 
 // MUI:
-import { AppBar, Badge, Box, Button, IconButton, Link, Toolbar, Typography } from '@mui/material';
+import { AppBar, Badge, Box, Button, IconButton, Input, InputAdornment, Link, Toolbar, Typography } from '@mui/material';
 
 // Icons:
-import { SearchOutlined, ShoppingCartOutlined } from '@mui/icons-material';
+import SearchOutlined from '@mui/icons-material/SearchOutlined';
+import ShoppingCartOutlined from '@mui/icons-material/ShoppingCartOutlined';
+import ClearOutlined from '@mui/icons-material/ClearOutlined';
 
 // Contexts:
 import { UiContext } from '../../context';
@@ -31,7 +33,20 @@ const menuItem = [
 export const NavBar: FC = () => {
 
     const { toggleSideMenu } = useContext(UiContext);
-    const { asPath } = useRouter();
+
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isSearchVisible, setIsSearchVisible] = useState(false);
+
+    const { asPath, push } = useRouter();
+
+
+    const onSearchTerm = () => {
+
+        if (searchTerm.trim().length === 0) return;
+        push(`/search/${searchTerm}`);
+        setSearchTerm('');
+
+    }
 
 
     return (
@@ -51,7 +66,7 @@ export const NavBar: FC = () => {
                 <Box sx={{ flex: 1 }}></Box>
 
 
-                <Box sx={{ display: { xs: 'none', sm: 'flex' } }}>
+                <Box className="fadeIn" sx={{ display: isSearchVisible ? 'none' : { xs: 'none', sm: 'flex' } }}>
 
                     {
                         menuItem.map(({ text, url }) => (
@@ -67,7 +82,46 @@ export const NavBar: FC = () => {
 
                 <Box sx={{ flex: 1 }}></Box>
 
-                <IconButton>
+                {/* Pantallas Grandes */}
+
+                {
+                    isSearchVisible ?
+                        (
+                            <Input
+                                className="fadeIn"
+                                sx={{ display: { xs: 'none', sm: 'flex' }, marginRight: 1, width: '20vw' }}
+                                autoFocus={true}
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && onSearchTerm()}
+                                type='text'
+                                placeholder="Buscar..."
+                                endAdornment={
+                                    <InputAdornment position="end">
+                                        <IconButton
+                                            onClick={() => setIsSearchVisible(false)}
+                                        >
+                                            <ClearOutlined />
+                                        </IconButton>
+                                    </InputAdornment>
+                                }
+                            />
+                        ) :
+                        (
+                            <IconButton
+                                className="fadeIn"
+                                sx={{ display: { xs: 'none', sm: 'flex' } }}
+                                onClick={() => setIsSearchVisible(true)}>
+                                <SearchOutlined />
+                            </IconButton>
+                        )
+                }
+
+
+                {/* Pantallas Pequeñas */}
+                <IconButton
+                    sx={{ display: { xs: 'flex', sm: 'none' } }}
+                    onClick={toggleSideMenu}>
                     <SearchOutlined />
                 </IconButton>
 
