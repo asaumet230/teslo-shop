@@ -13,7 +13,12 @@ export const Footer: FC = () => {
             justifyContent='center'
             alignItems='center'
             flexDirection='column'
-            sx={{ padding: '20px 30px', borderTop: '1px solid #f2f2f2' }}
+            sx={{
+                padding: '20px 30px',
+                borderTop: '1px solid #f2f2f2',
+                position: 'absolute',
+                width: '100%'
+            }}
         >
 
             <Box

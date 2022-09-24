@@ -1,7 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 
-// DataBase:
-import { db } from '../../../database';
 
 type HandlerProps =
     | { message: string };

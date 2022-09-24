@@ -111,15 +111,11 @@ export default slug;
 
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
-    const porductsSlugs = await getAllProductsSlug();
+    const productsSlugs = await getAllProductsSlug();
 
     return {
-        paths: porductsSlugs.map(porductSlug => ({
-
-            params: {
-                name: porductSlug.slug
-            }
-
+        paths: productsSlugs.map(({ slug }) => ({
+            params: { slug }
         })),
         fallback: "blocking"
     }
@@ -127,9 +123,9 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 
-    const { name } = params as { name: string };
+    const { slug = '' } = params as { slug: string };
 
-    const product = await getProductBySlug(name);
+    const product = await getProductBySlug(slug);
 
     if (!product) {
 

@@ -35,7 +35,11 @@ export const NavBar: FC = () => {
 
 
     return (
-        <AppBar sx={{ borderBottom: '1px solid #f2f2f2', paddingBottom: 0 }}>
+        <AppBar sx={{
+            borderBottom: '1px solid #f2f2f2',
+            paddingBottom: 0,
+            boxShadow: '0px 0px 10px 0px rgba(0, 0, 0, 0.1)'
+        }}>
             <Toolbar >
                 <NextLink href="/" passHref>
                     <Link display="flex" alignItems="center">
