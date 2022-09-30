@@ -9,7 +9,7 @@ import { lightTheme } from '../themes';
 import '../styles/globals.css';
 
 // Providers:
-import { UiProvider } from '../context/';
+import { UiProvider, CartProvider } from '../context/';
 
 function MyApp({ Component, pageProps }: AppProps) {
 
@@ -18,12 +18,17 @@ function MyApp({ Component, pageProps }: AppProps) {
     <SWRConfig value={{
       fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
     }}>
-      <UiProvider>
-        <ThemeProvider theme={lightTheme} >
-          <CssBaseline />
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </UiProvider>
+
+      <CartProvider>
+
+        <UiProvider>
+          <ThemeProvider theme={lightTheme} >
+            <CssBaseline />
+            <Component {...pageProps} />
+          </ThemeProvider>
+        </UiProvider>
+
+      </CartProvider>
     </SWRConfig>
   )
 

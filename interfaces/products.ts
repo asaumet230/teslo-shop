@@ -8,7 +8,7 @@ export interface IResponse {
 
 
 export interface IProducts {
-    _id?: string;
+    _id: string;
     description: string;
     images: string[];
     inStock: number;

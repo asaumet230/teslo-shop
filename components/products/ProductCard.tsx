@@ -7,6 +7,7 @@ import NextLink from 'next/link';
 import {
     Grid,
     Card,
+    Chip,
     CardActionArea,
     CardMedia,
     Box,
@@ -44,14 +45,27 @@ export const ProductCard: FC<Props> = ({ product }) => {
 
                 <NextLink href={`/product/${product.slug}`} passHref prefetch={false}>
                     <Link>
+
                         <CardActionArea >
+
+                            {
+                                product.inStock === 0 && (
+                                    <Chip
+                                        color='primary'
+                                        label='Agotado'
+                                        sx={{ position: 'absolute', zIndex: 99, top: '10px', left: '10px' }} />
+                                )
+                            }
+
                             <CardMedia
                                 className="fadeIn"
                                 component='img'
                                 image={productImage}
                                 alt={product.title}
                                 onLoad={() => setIsImageLoaded(true)} />
+
                         </CardActionArea>
+
                     </Link>
                 </NextLink>
 
