@@ -4,7 +4,9 @@ import { FC, useState } from "react";
 import { Box, IconButton, Typography } from "@mui/material";
 
 // Icons:
-import { AddCircleOutline, RemoveCircleOutline } from "@mui/icons-material";
+import AddCircleOutline from '@mui/icons-material/AddCircleOutline';
+import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
+
 
 interface Props {
   maxValue: number;

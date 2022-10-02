@@ -5,7 +5,8 @@ import NextLink from 'next/link';
 import { Box, Card, CardContent, Divider, Grid, Typography, Link, Chip } from '@mui/material';
 
 // Icons:
-import { CreditCardOffOutlined, CreditScoreOutlined } from '@mui/icons-material';
+import CreditCardOffOutlined from '@mui/icons-material/CreditCardOffOutlined';
+import CreditScoreOutlined from '@mui/icons-material/CreditScoreOutlined';
 
 // Layout:
 import { ShopLayout } from '../../components/layouts';

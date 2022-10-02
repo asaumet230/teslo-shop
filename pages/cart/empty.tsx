@@ -5,7 +5,7 @@ import NextLink from 'next/link';
 import { Box, Link, Typography } from '@mui/material';
 
 // Icons:
-import { RemoveShoppingCartOutlined } from '@mui/icons-material';
+import RemoveShoppingCartOutlined from '@mui/icons-material/RemoveShoppingCartOutlined';
 
 // Layout:
 import { ShopLayout } from '../../components/layouts';

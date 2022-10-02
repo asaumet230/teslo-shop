@@ -1,4 +1,5 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer } from 'react';
+import Cookie from 'js-cookie';
 
 // Context & Reducer:
 import { CartContext, cartReducer } from './';
@@ -16,13 +17,49 @@ export interface CartState {
 }
 
 const CART_INITIAL_STATE: CartState = {
-    cart: []
+    cart: Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : []
 }
 
 
 export const CartProvider = ({ children }: CartProviderProps) => {
 
     const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
+
+    // Retoma los datos de la cookie para cambiar el State:
+    useEffect(() => {
+
+
+        //* Para prevenir una Cookie Manipulada se usa un ty y cacth ya que los navegadores saben cuando un Cookie es manipulada en especial Google Chrome:
+
+        try {
+            const cart = Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : [];
+            getProductFromCookie(cart);
+            // console.log(state.cart);
+
+        } catch (error) {
+            getProductFromCookie([]);
+        }
+
+    }, [])
+
+
+
+    // Guarda el carrito de compras en la Cookie:
+    useEffect(() => {
+
+        Cookie.set('cart', JSON.stringify(state.cart));
+
+    }, [state.cart])
+
+
+    const getProductFromCookie = (cart: ICartProduct[]) => {
+
+        dispatch({
+            type: '[CART] - Load Cart From Cookies | Storage',
+            payload: cart
+        });
+
+    }
 
     const addProductToCart = (product: ICartProduct) => {
 
@@ -46,6 +83,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
         dispatch({ type: '[CART] - Updated Product in Cart', payload: newProductCart });
     }
+
 
 
 

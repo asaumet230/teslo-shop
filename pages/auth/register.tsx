@@ -6,7 +6,9 @@ import NextLink from 'next/link';
 import { Box, Grid, TextField, Typography, Button, Link, InputAdornment, IconButton } from '@mui/material';
 
 // Icons:
-import { Visibility, VisibilityOff, AccountCircleRounded } from '@mui/icons-material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import AccountCircleRounded from '@mui/icons-material/AccountCircleRounded';
 
 // Laoyut:
 import { AuthLayout } from '../../components/layouts';

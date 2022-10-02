@@ -1,19 +1,24 @@
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import NextLink from 'next/link';
 
 // MUI:
 import { Box, Button, CardActionArea, CardMedia, Grid, Link, Typography } from '@mui/material';
 
-// Test Data:
-import { initialData } from '../../database/products';
+// Context:
+import { CartContext } from '../../context';
+
+// Components:
 import { ItemCounter } from '../ui';
 
-const porductsInCart = [
+// Test Data:
+//import { initialData } from '../../database/products';
 
-    initialData.products[0],
-    initialData.products[1],
-    initialData.products[2],
-]
+// const porductsInCart = [
+
+//     initialData.products[0],
+//     initialData.products[1],
+//     initialData.products[2],
+// ]
 
 interface Props {
     editable?: boolean;
@@ -22,11 +27,17 @@ interface Props {
 
 export const CartList: FC<Props> = ({ editable = false }) => {
 
+    const { cart } = useContext(CartContext);
+
+    const onQuantitySelected = (quantity: number) => {
+        console.log(quantity);
+    }
+
 
     return (
         <>
             {
-                porductsInCart.map(product => (
+                cart.map(product => (
 
                     <Grid container spacing={2} key={product.slug} sx={{ mb: 1 }}>
 
@@ -36,7 +47,7 @@ export const CartList: FC<Props> = ({ editable = false }) => {
                                 <Link>
                                     <CardActionArea>
                                         <CardMedia
-                                            image={`/products/${product.images[0]}`}
+                                            image={`/products/${product.image}`}
                                             component='img'
                                             sx={{ borderRadius: '5px' }}
                                         />
@@ -53,7 +64,7 @@ export const CartList: FC<Props> = ({ editable = false }) => {
                                 <Typography variant='body1'> Talla <strong>M</strong> </Typography>
 
                                 {
-                                    editable ? (<ItemCounter />) : <Typography variant='h6'> 3 Items </Typography>
+                                    editable ? (<ItemCounter maxValue={product.maxQuantity} onQuantitySelected={onQuantitySelected} />) : <Typography variant='h6'> 3 Items </Typography>
                                 }
 
 

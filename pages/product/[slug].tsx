@@ -60,6 +60,7 @@ export const slug: NextPage<Props> = ({ product }) => {
         title: product.title,
         gender: product.gender,
         quantity: 0,
+        maxQuantity: product.inStock
     });
 
     const onSelectedSize = (size: ISize) => {
