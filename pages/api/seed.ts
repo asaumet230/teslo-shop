@@ -1,11 +1,12 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
+import bcrypt from 'bcryptjs';
 
 // Data Base:
 import { db } from '../../database';
 
 // Models:
-import { Product } from '../../models';
+import { Product, User } from '../../models';
 
 // Datat to insert in DB:
 import { initialData as seedData } from '../../database';
@@ -26,6 +27,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<HandlerProps>) 
     try {
 
         await db.connect();
+
+        await User.deleteMany();
+
+        const encryptedPasswordUsers = seedData.users.map(user => ({
+            ...user,
+            password: bcrypt.hashSync(user.password)
+        }));
+
+        await User.insertMany(encryptedPasswordUsers);
 
         await Product.deleteMany(); // Este metodo borra todo el contenido de la colección de la DB.
         await Product.insertMany(seedData.products); // Este metodo inserta muchos datos a la colección Product en la DB.

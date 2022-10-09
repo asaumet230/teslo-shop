@@ -11,7 +11,7 @@ import { FullScreenLoading } from '../components/ui';
 import { useProducts } from '../hooks';
 
 //? Data To Design Frontend:
-import { initialData } from '../database/products';
+import { initialData } from '../database/seed-data';
 
 
 const HomePage: NextPage = () => {

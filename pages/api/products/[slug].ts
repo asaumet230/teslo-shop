@@ -52,7 +52,7 @@ const getProductBySlug = async (req: NextApiRequest, res: NextApiResponse) => {
         await db.disconnect();
         console.log(error);
 
-        res.status(500).json({
+        return res.status(500).json({
             message: 'Error comuniquese con el administrador'
         });
     }

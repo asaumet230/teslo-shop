@@ -1,4 +1,4 @@
 export * as db from './db';
 export * from './constants';
 export * from './dbProduct';
-export * from './products';
+export * from './seed-data';
