@@ -7,20 +7,24 @@ import { Box, IconButton, Typography } from "@mui/material";
 import AddCircleOutline from '@mui/icons-material/AddCircleOutline';
 import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
 
+// Interfaces:
+import { ICartProduct } from "../../interfaces";
+
 
 interface Props {
   maxValue: number;
   onQuantitySelected: (quantity: number) => void;
+  currentValue: number;
 
 }
 
-export const ItemCounter: FC<Props> = ({ maxValue, onQuantitySelected }) => {
+export const ItemCounter: FC<Props> = ({ maxValue, onQuantitySelected, currentValue }) => {
 
-  const [counter, setCounter] = useState<number>(0);
+  const [counter, setCounter] = useState<number>(currentValue);
 
   const increaseBy = (value: number): void => {
 
-    let newValue = Math.max(counter + value, 0);
+    let newValue = Math.max(counter + value, 1);
 
     if (maxValue) {
       newValue = Math.min(newValue, maxValue);

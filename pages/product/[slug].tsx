@@ -59,7 +59,7 @@ export const slug: NextPage<Props> = ({ product }) => {
         slug: product.slug,
         title: product.title,
         gender: product.gender,
-        quantity: 0,
+        quantity: 1,
         maxQuantity: product.inStock
     });
 
@@ -73,10 +73,10 @@ export const slug: NextPage<Props> = ({ product }) => {
 
     const onQuantitySelected = (quantity: number) => {
 
-        setTempCartProduct({
+        setTempCartProduct((tempCartProduct) => ({
             ...tempCartProduct,
             quantity
-        })
+        }));
     }
 
     const onAddProduct = (): void => {
@@ -110,6 +110,7 @@ export const slug: NextPage<Props> = ({ product }) => {
                             <ItemCounter
                                 maxValue={product.inStock}
                                 onQuantitySelected={onQuantitySelected}
+                                currentValue={tempCartProduct.quantity}
                             />
                             <SizeSelector
                                 sizes={product.sizes}
