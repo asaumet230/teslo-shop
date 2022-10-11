@@ -7,16 +7,13 @@ import { User } from '../../../models';
 
 import { jwtGenerator } from '../../../utils';
 
+import { IUser } from '../../../interfaces';
 
-interface UserProps {
-    name: string;
-    email: string;
-    role: string;
-}
+
 
 type Data =
     | { message: string }
-    | { token: string | undefined, user: UserProps };
+    | { token: string | undefined, user: IUser };
 
 
 
@@ -65,15 +62,16 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
             });
         }
 
-        const { _id, firstName, lastName, role } = user;
+        const { _id, firstName, lastName, role, email: userEmail } = user;
 
         const token = await jwtGenerator(_id, user.email);
 
         return res.status(200).json({
             token,
             user: {
-                name: `${firstName} ${lastName}`,
-                email: user.email,
+                firstName,
+                lastName,
+                email: userEmail,
                 role,
             }
         });
