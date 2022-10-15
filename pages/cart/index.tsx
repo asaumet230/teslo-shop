@@ -1,16 +1,44 @@
+import { useContext, useEffect } from 'react';
 import { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import Cookies from 'js-cookie';
+
 import { Box, Button, Card, CardContent, Divider, Grid, Typography } from '@mui/material';
 
-// Layout:
-import { ShopLayout } from '../../components/layouts';
+import { CartContext } from '../../context';
 
-// Components:
+import { FullScreenLoading } from '../../components/ui';
+import { ShopLayout } from '../../components/layouts';
 import { CartList, OrderSummary } from '../../components/cart';
+
 
 
 export const CartPage: NextPage = () => {
 
-   
+    const { isLoaded, numberOfItems } = useContext(CartContext);
+    const router = useRouter();
+
+    useEffect(() => {
+
+        if (isLoaded && numberOfItems === 0) {
+            router.replace('/cart/empty');
+        }
+    }, [isLoaded, numberOfItems, router]);
+
+
+    if (!isLoaded || numberOfItems === 0) return (<FullScreenLoading />);
+
+    const onCheckout = () => {
+
+        const token = Cookies.get('token');
+
+        if (!token) {
+            router.replace('/auth/login?p=/cart');
+        }
+
+        router.replace('/checkout/address');
+
+    }
 
     return (
         <ShopLayout title={'Carrito - 3'} pageDescription={'Carrito de compras'}>
@@ -33,7 +61,11 @@ export const CartPage: NextPage = () => {
                             <OrderSummary />
 
                             <Box sx={{ mt: 3 }}>
-                                <Button color='secondary' className='circular-btn' fullWidth>
+                                <Button
+                                    color='secondary'
+                                    className='circular-btn'
+                                    fullWidth
+                                    onClick={onCheckout}>
                                     Checkout
                                 </Button>
                             </Box>
@@ -44,8 +76,10 @@ export const CartPage: NextPage = () => {
 
             </Grid>
 
-        </ShopLayout>
+        </ShopLayout >
     )
 }
 
 export default CartPage;
+
+

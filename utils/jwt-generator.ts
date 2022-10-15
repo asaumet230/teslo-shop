@@ -35,6 +35,10 @@ export const isValidToken = (token: string): Promise<string> => {
         throw new Error('Semilla de JWT no proporcionada');
     }
 
+    if (token.length <= 10) {
+        return Promise.reject('Token no es válido');
+    }
+
     return new Promise((resolve, reject) => {
 
         jwt.verify(token, process.env.SECRET_JWT_SEED || '', (error, payload) => {

@@ -1,3 +1,4 @@
+import { isValidToken } from "./jwt-generator";
 
 export const isValidEmail = (email: string): boolean => {
 
@@ -15,5 +16,4 @@ export const isEmail = (email: string): string | undefined => {
         ? undefined
         : 'El correo no parece ser válido';
 }
-
 

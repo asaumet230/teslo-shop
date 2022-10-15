@@ -58,10 +58,14 @@ const RegisterPage: NextPage = () => {
         }
     }, [isErrorLogged, errorMessage]);
 
-    const onUserRegister = async ({ firstName, lastName, email, password, password2 }: FormData) => {
+    const onUserRegister = async ({ firstName, lastName, email, password }: FormData) => {
 
         const isValidUserRegister = await registerUser(firstName, lastName, email, password);
-        if (isValidUserRegister) return router.replace('/');
+
+        if (isValidUserRegister) {
+            const destination = router.query.p?.toString() || '/';
+            router.replace(destination);
+        };
 
     }
 
@@ -209,7 +213,7 @@ const RegisterPage: NextPage = () => {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <NextLink href='/auth/login' passHref>
+                            <NextLink href={router.query.p ? `/auth/login?p=${router.query.p}` : '/auth/login'} passHref>
                                 <Link color='secondary' underline='always'>
                                     ¿Ya tienes cuenta?
                                 </Link>

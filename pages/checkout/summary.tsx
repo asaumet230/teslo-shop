@@ -1,15 +1,40 @@
-import { NextPage } from 'next';
+import { useContext, useEffect, useMemo } from 'react';
+import { NextPage, GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 import { Box, Button, Card, CardContent, Divider, Grid, Typography, Link } from '@mui/material';
+
+import { CartContext } from '../../context';
 
 // Layout:
 import { ShopLayout } from '../../components/layouts';
 
 // Components:
 import { CartList, OrderSummary } from '../../components/cart';
+import { FullScreenLoading } from '../../components/ui';
+
+import { countries, isValidToken } from '../../utils';
+
 
 
 export const SummaryPage: NextPage = () => {
+
+    const { numberOfItems, shippingAddress } = useContext(CartContext);
+
+    const router = useRouter();
+
+    useEffect(() => {
+
+        if (numberOfItems <= 0 || !shippingAddress) {
+            router.replace('/');
+        }
+    }, []);
+
+    if (numberOfItems <= 0 || !shippingAddress) return (<FullScreenLoading />);
+
+    const { firstName, lastName, address, address2, city, country, state, zip, phone } = shippingAddress;
+    const selectedCountry = useMemo(() => countries.find(c => c.code === country), [country]);
+
 
     return (
         <ShopLayout title='Resumen de la orden' pageDescription='Resumen de la orden'>
@@ -26,7 +51,7 @@ export const SummaryPage: NextPage = () => {
                     <Card className='summary-card' sx={{ padding: '5px 10px' }}>
                         <CardContent>
 
-                            <Typography variant='h2' fontWeight={500}>Resumen (3 productos)</Typography>
+                            <Typography variant='h2' fontWeight={500}>Resumen ({`${numberOfItems}  ${numberOfItems === 1 ? 'Producto' : 'Productos'}`})</Typography>
                             <Divider sx={{ my: 1 }} />
 
                             <Box display='flex' justifyContent='space-between' mt={2}>
@@ -39,11 +64,11 @@ export const SummaryPage: NextPage = () => {
                             </Box>
 
 
-                            <Typography>Andres Felipe Saumet</Typography>
-                            <Typography>Calle 26 No 2A-36</Typography>
-                            <Typography>Santa Marta - Magdalena, zip 470006</Typography>
-                            <Typography>Colombia</Typography>
-                            <Typography mb={2}>+605-3017826682</Typography>
+                            <Typography>{`${firstName}  ${lastName}`}</Typography>
+                            <Typography>{`${address} ${address2 ? `, ${address2}` : ''}`}</Typography>
+                            <Typography>{`${city} - ${state}, zip code: ${zip}`}</Typography>
+                            <Typography>{selectedCountry?.name}</Typography>
+                            <Typography mb={2}>{phone}</Typography>
 
                             <Divider sx={{ my: 1 }} />
 
@@ -74,3 +99,48 @@ export const SummaryPage: NextPage = () => {
 }
 
 export default SummaryPage;
+
+
+export const getServerSideProps: GetServerSideProps = async ({ req }) => {
+
+
+    const { token = '' } = req.cookies;
+    let userId = '';
+    let hasValidToken = false;
+
+    if (token.length === 0) {
+        return {
+            redirect: {
+                destination: '/auth/login?p=/checkout/summary',
+                permanent: false
+            }
+        }
+    }
+
+    try {
+
+        userId = await isValidToken(token);
+        hasValidToken = true;
+
+    } catch (error) {
+        hasValidToken = false;
+    }
+
+
+    if (!hasValidToken) {
+
+        return {
+            redirect: {
+                destination: '/auth/login?p=/checkout/summary',
+                permanent: false
+            }
+        }
+    }
+
+
+    return {
+        props: {
+
+        }
+    }
+}

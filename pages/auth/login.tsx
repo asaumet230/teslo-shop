@@ -39,7 +39,6 @@ const LoginPage: NextPage = () => {
 
     const router = useRouter();
 
-
     useEffect(() => {
 
         if (isErrorLogged) {
@@ -60,7 +59,12 @@ const LoginPage: NextPage = () => {
     const onLoginuser = async ({ email, password }: FormData) => {
 
         const isValidLogin = await loginUser(email, password);
-        if (isValidLogin) return router.replace('/');
+
+        if (isValidLogin) {
+
+            const destination = router.query.p?.toString() || '';
+            return router.replace(destination);
+        };
 
 
     }
@@ -160,7 +164,7 @@ const LoginPage: NextPage = () => {
                         </Grid>
 
                         <Grid item xs={12}>
-                            <NextLink href='/auth/register' passHref>
+                            <NextLink href={router.query.p ? `/auth/register?p=${router.query.p}` : '/auth/register'} passHref>
                                 <Link color='secondary' underline='always'>
                                     ¿No tienes cuenta?
                                 </Link>

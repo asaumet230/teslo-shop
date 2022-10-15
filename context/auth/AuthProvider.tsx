@@ -1,4 +1,5 @@
 import { useReducer, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -30,10 +31,14 @@ const AUTH_INITIAL_STATE: AuthState = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
+    const router = useRouter()
 
 
     useEffect(() => {
+
+        if (!Cookies.get('token')) return;
         checkToken();
+
     }, []);
 
 
@@ -102,6 +107,21 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         }
     }
 
+    const logout = () => {
+
+        Cookies.remove('token');
+        Cookies.remove('cart');
+        Cookies.remove('firstName');
+        Cookies.remove('lastName');
+        Cookies.remove('address');
+        Cookies.remove('address2');
+        Cookies.remove('zip');
+        Cookies.remove('city');
+        Cookies.remove('state');
+        Cookies.remove('country');
+        Cookies.remove('phone');
+        router.reload(); // el dispacth no se maneja porque quedaria el estado de mi carrito de compras con esto borras cache y cookies
+    }
 
     return (
         <AuthContext.Provider value={{
@@ -109,7 +129,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
             loginUser,
             startAuth,
-            registerUser
+            registerUser,
+            logout
         }}>
 
             {children}

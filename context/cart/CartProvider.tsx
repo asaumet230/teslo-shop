@@ -13,19 +13,35 @@ interface CartProviderProps {
 }
 
 export interface CartState {
+    isLoaded: boolean;
     cart: ICartProduct[];
     numberOfItems: number;
     subtotal: number;
     taxRate: number;
     total: number;
+    shippingAddress?: ShippingAddress | undefined;
+}
+
+export interface ShippingAddress {
+    firstName: string;
+    lastName: string;
+    address: string;
+    address2?: string;
+    zip: string;
+    city: string;
+    state: string;
+    country: string;
+    phone: string;
 }
 
 const CART_INITIAL_STATE: CartState = {
+    isLoaded: false,
     cart: Cookie.get('cart') ? JSON.parse(Cookie.get('cart')!) : [],
     numberOfItems: 0,
     subtotal: 0,
     taxRate: 0,
     total: 0,
+    shippingAddress: undefined
 }
 
 
@@ -48,7 +64,38 @@ export const CartProvider = ({ children }: CartProviderProps) => {
             getProductFromCookie([]);
         }
 
+    }, []);
+
+
+    useEffect(() => {
+
+        try {
+
+            if (Cookie.get('firstName')) {
+
+                const adddress = {
+                    firstName: Cookie.get('firstName') || '',
+                    lastName: Cookie.get('lastName') || '',
+                    address: Cookie.get('address') || '',
+                    address2: Cookie.get('address2') || '',
+                    zip: Cookie.get('zip') || '',
+                    city: Cookie.get('city') || '',
+                    state: Cookie.get('state') || '',
+                    country: Cookie.get('country') || '',
+                    phone: Cookie.get('phone') || '',
+                }
+
+                getAddressFromCookies(adddress);
+            }
+
+
+        } catch (error) {
+            getAddressFromCookies(undefined);
+        }
+
+
     }, [])
+
 
 
 
@@ -57,7 +104,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
 
         Cookie.set('cart', JSON.stringify(state.cart));
 
-    }, [state.cart])
+    }, [state.cart]);
 
 
     // Posee el resumen del carrito:
@@ -76,7 +123,7 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         dispatch({ type: '[CART] - Update Order Summary', payload: orderSummary });
 
 
-    }, [state.cart])
+    }, [state.cart]);
 
 
     const getProductFromCookie = (cart: ICartProduct[]) => {
@@ -111,12 +158,42 @@ export const CartProvider = ({ children }: CartProviderProps) => {
         dispatch({ type: '[CART] - Updated Product in Cart', payload: newProductCart });
     }
 
+
     const updateCartQuantity = (product: ICartProduct) => {
         dispatch({ type: '[CART] - Change Cart Quantity', payload: product });
     }
 
+
     const removeCartProduct = (product: ICartProduct) => {
         dispatch({ type: '[CART] - Remove Product in Cart', payload: product });
+    }
+
+
+    const getAddressFromCookies = (address: ShippingAddress | undefined) => {
+
+        dispatch({
+            type: '[CART] - Load Shippping Address From Cookies | Storage',
+            payload: address
+        });
+    }
+
+
+    const updatedShippingAddress = (address: ShippingAddress) => {
+
+        Cookie.set('firstName', address.firstName);
+        Cookie.set('lastName', address.lastName);
+        Cookie.set('address', address.address);
+        Cookie.set('address2', address.address2 || '');
+        Cookie.set('zip', address.zip);
+        Cookie.set('city', address.city);
+        Cookie.set('state', address.state);
+        Cookie.set('country', address.country);
+        Cookie.set('phone', address.phone);
+
+        dispatch({
+            type: '[CART] - Updated Shippping Address',
+            payload: address
+        });
     }
 
 
@@ -125,7 +202,8 @@ export const CartProvider = ({ children }: CartProviderProps) => {
             ...state,
             addProductToCart,
             updateCartQuantity,
-            removeCartProduct
+            removeCartProduct,
+            updatedShippingAddress
         }}>
 
             {children}
