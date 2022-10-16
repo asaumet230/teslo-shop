@@ -14,6 +14,7 @@ import { useProducts } from '../hooks';
 import { initialData } from '../database/seed-data';
 
 
+
 const HomePage: NextPage = () => {
 
   const { products, isLoading } = useProducts('products');

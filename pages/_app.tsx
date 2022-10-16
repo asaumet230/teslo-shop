@@ -1,4 +1,5 @@
 import type { AppProps } from 'next/app';
+import { SessionProvider } from "next-auth/react"
 import { SWRConfig } from 'swr';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 
@@ -15,24 +16,26 @@ function MyApp({ Component, pageProps }: AppProps) {
 
   return (
 
-    <SWRConfig value={{
-      fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
-    }}>
+    <SessionProvider>
+      <SWRConfig value={{
+        fetcher: (resource, init) => fetch(resource, init).then(res => res.json())
+      }}>
 
-      <AuthProvider>
-        <CartProvider>
+        <AuthProvider>
+          <CartProvider>
 
-          <UiProvider>
-            <ThemeProvider theme={lightTheme} >
-              <CssBaseline />
-              <Component {...pageProps} />
-            </ThemeProvider>
-          </UiProvider>
+            <UiProvider>
+              <ThemeProvider theme={lightTheme} >
+                <CssBaseline />
+                <Component {...pageProps} />
+              </ThemeProvider>
+            </UiProvider>
 
-        </CartProvider>
-      </AuthProvider>
+          </CartProvider>
+        </AuthProvider>
 
-    </SWRConfig>
+      </SWRConfig>
+    </SessionProvider>
   )
 
 }

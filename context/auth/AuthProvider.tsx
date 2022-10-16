@@ -1,5 +1,6 @@
 import { useReducer, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -30,16 +31,29 @@ const AUTH_INITIAL_STATE: AuthState = {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
 
+    const { data, status } = useSession();
     const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
     const router = useRouter()
 
 
     useEffect(() => {
 
-        if (!Cookies.get('token')) return;
-        checkToken();
+        if (status === 'authenticated') {
+            console.log(data.user);
+            // dispatch({ type: '[AUTH] - Login', payload: data.user as IUser })
 
-    }, []);
+        }
+
+    }, [status, data]);
+
+
+    //? En este punto ya no utilizo mi autentcación personalizada sino me voy a basar e NextAuth:
+    // useEffect(() => {
+
+    //     if (!Cookies.get('token')) return;
+    //     checkToken();
+
+    // }, []);
 
 
     const checkToken = async () => {
