@@ -8,7 +8,7 @@ import { isValidEmail, jwtGenerator } from '../../../utils';
 
 type Data =
     | { message: string }
-    | { token: string, user: { name: string, email: string, role: string } };
+    | { token: string, user: { firstName: string, lastName: string, email: string, role: string } };
 
 const handler = (req: NextApiRequest, res: NextApiResponse<Data>) => {
 
@@ -75,7 +75,8 @@ const userRegister = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
             return res.status(200).json({
                 token,
                 user: {
-                    name: `${newUser.firstName} ${newUser.lastName}`,
+                    firstName: newUser.firstName,
+                    lastName: newUser.lastName,
                     email: newUser.email,
                     role: newUser.role
                 }
@@ -95,7 +96,8 @@ const userRegister = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
             return res.status(200).json({
                 token,
                 user: {
-                    name: `${updatedUser!.firstName} ${updatedUser!.lastName}`,
+                    firstName: updatedUser!.firstName,
+                    lastName: updatedUser!.lastName,
                     email: updatedUser!.email,
                     role: updatedUser!.role
                 }

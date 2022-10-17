@@ -1,6 +1,10 @@
-import NextAuth from "next-auth";
-import GithubProvider from "next-auth/providers/github";
+import NextAuth, { Account, Profile, Session, User } from "next-auth";
+import { AdapterUser } from "next-auth/adapters";
 import Credentials from "next-auth/providers/credentials";
+import { JWT } from "next-auth/jwt";
+import GithubProvider from "next-auth/providers/github";
+
+import { checkUserEmailPassword, oAuthToDbUser } from "../../../database";
 
 export const authOptions = {
 
@@ -14,8 +18,8 @@ export const authOptions = {
                 password: { label: 'Contraseña:', type: 'password', placeholder: 'Contraseña' },
             },
             async authorize(credentials) {
-                console.log({ credentials })
-                return { id: '123456', name: 'juan', email: 'juan@google.com', role: 'ADMINROLE' };
+
+                return await checkUserEmailPassword(credentials?.email!, credentials?.password!);
             }
         }),
 
@@ -29,7 +33,39 @@ export const authOptions = {
 
     // CallBacks:
     callbacks: {
-        
+
+        async jwt({ token, account, user }: { [x: string]: any }) {
+
+            if (account) {
+
+                token.access_token = account.access_token;
+
+                switch (account.type) {
+
+                    case 'oauth':
+
+                        const dbuser = await oAuthToDbUser(user.email, user.name);
+                        token.user = dbuser;
+
+                        break;
+
+                    case 'credentials':
+                        token.user = user;
+                        break;
+
+                }
+            }
+
+            return token;
+        },
+
+        async session({ session, token }: { [x: string]: any }) {
+
+            session.access_token = token.access_token;
+            session.user = token.user;
+            return session;
+        }
+
     }
 
 

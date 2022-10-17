@@ -1,6 +1,6 @@
 import { useReducer, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { useSession } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -33,15 +33,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const { data, status } = useSession();
     const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
-    const router = useRouter()
+    // const router = useRouter();
 
 
     useEffect(() => {
 
         if (status === 'authenticated') {
-            console.log(data.user);
-            // dispatch({ type: '[AUTH] - Login', payload: data.user as IUser })
-
+            console.log({ user: data.user });
+            dispatch({ type: '[AUTH] - Login', payload: data.user as IUser })
         }
 
     }, [status, data]);
@@ -123,7 +122,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
     const logout = () => {
 
-        Cookies.remove('token');
         Cookies.remove('cart');
         Cookies.remove('firstName');
         Cookies.remove('lastName');
@@ -134,7 +132,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         Cookies.remove('state');
         Cookies.remove('country');
         Cookies.remove('phone');
-        router.reload(); // el dispacth no se maneja porque quedaria el estado de mi carrito de compras con esto borras cache y cookies
+
+        signOut();
+
+
+        // Cookies.remove('token');
+        // router.reload(); // el dispacth no se maneja porque quedaria el estado de mi carrito de compras con esto borras cache y cookies
     }
 
     return (
