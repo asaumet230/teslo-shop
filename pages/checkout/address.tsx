@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { NextPage, GetServerSideProps } from 'next';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
+import { getSession } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 
 import { CartContext } from '../../context';
@@ -219,12 +220,9 @@ export default AddressPage;
 // * Antes tocaba repetir este codigo en cada pagina donde era necesaria la verificación.
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
+    const session = await getSession({ req });
 
-    const { token = '' } = req.cookies;
-    let userId = '';
-    let hasValidToken = false;
-
-    if (token.length === 0) {
+    if (!session) {
         return {
             redirect: {
                 destination: '/auth/login?p=/checkout/address',
@@ -233,25 +231,38 @@ export const getServerSideProps: GetServerSideProps = async ({ req }) => {
         }
     }
 
-    try {
+    // const { token = '' } = req.cookies;
+    // let userId = '';
+    // let hasValidToken = false;
 
-        userId = await isValidToken(token);
-        hasValidToken = true;
+    // if (token.length === 0) {
+    //     return {
+    //         redirect: {
+    //             destination: '/auth/login?p=/checkout/address',
+    //             permanent: false
+    //         }
+    //     }
+    // }
 
-    } catch (error) {
-        hasValidToken = false;
-    }
+    // try {
+
+    //     userId = await isValidToken(token);
+    //     hasValidToken = true;
+
+    // } catch (error) {
+    //     hasValidToken = false;
+    // }
 
 
-    if (!hasValidToken) {
+    // if (!hasValidToken) {
 
-        return {
-            redirect: {
-                destination: '/auth/login?p=/checkout/address',
-                permanent: false
-            }
-        }
-    }
+    //     return {
+    //         redirect: {
+    //             destination: '/auth/login?p=/checkout/address',
+    //             permanent: false
+    //         }
+    //     }
+    // }
 
     return {
         props: {

@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo } from 'react';
 import { NextPage, GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
+import { getSession } from 'next-auth/react';
 import { Box, Button, Card, CardContent, Divider, Grid, Typography, Link } from '@mui/material';
 
 import { CartContext } from '../../context';
@@ -103,39 +104,49 @@ export default SummaryPage;
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
 
+    const session = await getSession({ req });
 
-    const { token = '' } = req.cookies;
-    let userId = '';
-    let hasValidToken = false;
-
-    if (token.length === 0) {
+    if (!session) {
         return {
             redirect: {
-                destination: '/auth/login?p=/checkout/summary',
+                destination: '/auth/login?p=/checkout/address',
                 permanent: false
             }
         }
     }
 
-    try {
+    // const { token = '' } = req.cookies;
+    // let userId = '';
+    // let hasValidToken = false;
 
-        userId = await isValidToken(token);
-        hasValidToken = true;
+    // if (token.length === 0) {
+    //     return {
+    //         redirect: {
+    //             destination: '/auth/login?p=/checkout/summary',
+    //             permanent: false
+    //         }
+    //     }
+    // }
 
-    } catch (error) {
-        hasValidToken = false;
-    }
+    // try {
+
+    //     userId = await isValidToken(token);
+    //     hasValidToken = true;
+
+    // } catch (error) {
+    //     hasValidToken = false;
+    // }
 
 
-    if (!hasValidToken) {
+    // if (!hasValidToken) {
 
-        return {
-            redirect: {
-                destination: '/auth/login?p=/checkout/summary',
-                permanent: false
-            }
-        }
-    }
+    //     return {
+    //         redirect: {
+    //             destination: '/auth/login?p=/checkout/summary',
+    //             permanent: false
+    //         }
+    //     }
+    // }
 
 
     return {
