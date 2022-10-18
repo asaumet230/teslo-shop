@@ -10,21 +10,22 @@ import { IUser } from '../../interfaces';
 
 
 
+
 interface AuthProviderProps {
     children: JSX.Element | JSX.Element[],
 }
 
 export interface AuthState {
-    isLoggedIn: boolean;
-    isErrorLogged: boolean;
     errorMessage: string;
+    isErrorLogged: boolean;
+    isLoggedIn: boolean;
     user?: IUser;
 }
 
 const AUTH_INITIAL_STATE: AuthState = {
-    isLoggedIn: false,
-    isErrorLogged: false,
     errorMessage: '',
+    isErrorLogged: false,
+    isLoggedIn: false,
     user: undefined
 }
 
@@ -39,8 +40,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     useEffect(() => {
 
         if (status === 'authenticated') {
-            console.log({ user: data.user });
-            dispatch({ type: '[AUTH] - Login', payload: data.user as IUser })
+
+            if (data.user !== undefined) {
+                dispatch({ type: '[AUTH] - Login', payload: data.user as IUser });
+            }
         }
 
     }, [status, data]);

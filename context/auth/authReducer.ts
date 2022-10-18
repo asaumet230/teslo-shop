@@ -17,18 +17,18 @@ export const authReducer = (state: AuthState, action: AuthAction): AuthState => 
         case '[AUTH] - Start Auth':
             return {
                 ...state,
-                isLoggedIn: false,
-                isErrorLogged: false,
                 errorMessage: '',
+                isErrorLogged: false,
+                isLoggedIn: false,
                 user: undefined
             }
 
         case '[AUTH] - Login':
             return {
                 ...state,
-                isLoggedIn: true,
-                isErrorLogged: false,
                 errorMessage: '',
+                isErrorLogged: false,
+                isLoggedIn: true,
                 user: action.payload
             }
 
@@ -44,9 +44,9 @@ export const authReducer = (state: AuthState, action: AuthAction): AuthState => 
         case '[AUTH] - Register':
             return {
                 ...state,
-                isLoggedIn: true,
-                isErrorLogged: false,
                 errorMessage: '',
+                isErrorLogged: false,
+                isLoggedIn: true,
                 user: action.payload
             }
 
@@ -56,8 +56,9 @@ export const authReducer = (state: AuthState, action: AuthAction): AuthState => 
                 errorMessage: action.payload,
                 isErrorLogged: true,
                 isLoggedIn: false,
-                user: undefined
+                user: undefined,
             }
+
         default:
             return state;
     }

@@ -1,8 +1,9 @@
 import { useContext, useEffect, useState } from 'react';
-import { NextPage } from 'next';
+import { NextPage, GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 import { useForm } from "react-hook-form";
+import { getSession, signIn } from 'next-auth/react';
 
 // MUI:
 import { Box, Grid, TextField, Typography, Button, Link, InputAdornment, IconButton, Chip } from '@mui/material';
@@ -13,11 +14,9 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import AccountCircleRounded from '@mui/icons-material/AccountCircleRounded';
 import ErrorOutline from '@mui/icons-material/ErrorOutline';
 
-
 import { AuthContext } from '../../context';
 import { AuthLayout } from '../../components/layouts';
 import { isEmail } from '../../utils/validations';
-
 
 
 
@@ -32,41 +31,62 @@ const LoginPage: NextPage = () => {
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
 
-    const { loginUser, startAuth, errorMessage, isErrorLogged } = useContext(AuthContext);
-    const [showError, setShowError] = useState(false);
+    // const { loginUser, startAuth, errorMessage, isErrorLogged } = useContext(AuthContext);
+
     const [showPassword, setShowPassword] = useState(false);
+
+    const [showError, setShowError] = useState(false);
     const [showErrorMessage, setShowErrorMessage] = useState('');
 
     const router = useRouter();
 
-    useEffect(() => {
+    // useEffect(() => {
 
-        if (isErrorLogged) {
+    //     if (isErrorLogged) {
 
-            setShowError(true);
-            setShowErrorMessage(errorMessage);
+    //         setShowError(true);
+    //         setShowErrorMessage(errorMessage);
 
-
-            setTimeout(() => {
-                setShowError(false);
-                setShowErrorMessage('');
-                startAuth();
-            }, 3000);
-        }
-    }, [isErrorLogged, errorMessage]);
+    //         setTimeout(() => {
+    //             setShowError(false);
+    //             setShowErrorMessage('');
+    //             startAuth();
+    //         }, 3000);
+    //     }
+    // }, [isErrorLogged, errorMessage]);
 
 
     const onLoginuser = async ({ email, password }: FormData) => {
 
-        const isValidLogin = await loginUser(email, password);
+        // const isValidLogin = await loginUser(email, password);
 
-        if (isValidLogin) {
+        // if (isValidLogin) {
 
-            const destination = router.query.p?.toString() || '';
-            return router.replace(destination);
-        };
+        //     const destination = router.query.p?.toString() || '';
+        //     return router.replace(destination);
+        // };
 
+        const res = await signIn('credentials', {
+            email,
+            password,
+            redirect: false
+        });
 
+        if (!res?.ok) {
+
+            setShowError(true);
+            setShowErrorMessage(res?.error || '');
+
+            setTimeout(() => {
+                setShowError(false);
+                setShowErrorMessage('');
+            }, 3000);
+
+            return
+        }
+
+        const destination = router.query.p?.toString() || '';
+        return router.replace(destination);
     }
 
     return (
@@ -181,3 +201,29 @@ const LoginPage: NextPage = () => {
 }
 
 export default LoginPage;
+
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+
+    const session = await getSession({ req });
+    const { p = '/' } = query;
+
+    if (session) {
+        return {
+            redirect: {
+                destination: p.toString(),
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: {
+
+        }
+    }
+}

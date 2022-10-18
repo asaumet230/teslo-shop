@@ -1,7 +1,8 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { NextPage } from 'next';
+import { NextPage, GetServerSideProps } from 'next';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import { getSession, signIn } from 'next-auth/react';
 import { useForm } from "react-hook-form";
 
 // MUI:
@@ -30,7 +31,6 @@ type FormData = {
 const RegisterPage: NextPage = () => {
 
     const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
-
     const { registerUser, startAuth, isErrorLogged, errorMessage } = useContext(AuthContext);
 
     const router = useRouter();
@@ -39,6 +39,7 @@ const RegisterPage: NextPage = () => {
 
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     const [showError, setShowError] = useState(false);
     const [showErrorMessage, setShowErrorMessage] = useState('');
 
@@ -49,7 +50,6 @@ const RegisterPage: NextPage = () => {
             setShowError(true);
             setShowErrorMessage(errorMessage);
 
-
             setTimeout(() => {
                 setShowError(false);
                 setShowErrorMessage('');
@@ -58,11 +58,33 @@ const RegisterPage: NextPage = () => {
         }
     }, [isErrorLogged, errorMessage]);
 
+
     const onUserRegister = async ({ firstName, lastName, email, password }: FormData) => {
 
         const isValidUserRegister = await registerUser(firstName, lastName, email, password);
 
         if (isValidUserRegister) {
+
+            const resp = await signIn('credentials', {
+                email,
+                password,
+                redirect: false
+            });
+
+            if (!resp?.ok) {
+
+                setShowError(true);
+                setShowErrorMessage(resp?.error || '');
+
+                setTimeout(() => {
+                    setShowError(false);
+                    setShowErrorMessage('');
+                }, 3000);
+
+                return;
+
+            }
+
             const destination = router.query.p?.toString() || '/';
             router.replace(destination);
         };
@@ -114,7 +136,7 @@ const RegisterPage: NextPage = () => {
                                 fullWidth
                                 {...register('firstName', {
                                     required: 'El nombre es obligatorio',
-                                    minLength: { value: 2, message: 'El nombre debe de tener mínimo tres caracteres' }
+                                    minLength: { value: 2, message: 'El nombre debe de tener mínimo 2 caracteres' }
                                 })}
                                 error={!!errors.firstName}
                                 helperText={errors.firstName?.message} />
@@ -127,7 +149,7 @@ const RegisterPage: NextPage = () => {
                                 fullWidth
                                 {...register('lastName', {
                                     required: 'El nombre es obligatorio',
-                                    minLength: { value: 2, message: 'El apellido debe de tener mínimo tres caracteres' }
+                                    minLength: { value: 2, message: 'El apellido debe de tener mínimo 2 caracteres' }
                                 })}
                                 error={!!errors.lastName}
                                 helperText={errors.lastName?.message} />
@@ -230,3 +252,26 @@ const RegisterPage: NextPage = () => {
 }
 
 export default RegisterPage;
+
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+
+    const session = await getSession({ req });
+
+    const { p = '/' } = query;
+
+    if (session) {
+        return {
+            redirect: {
+                destination: p.toString(),
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: {
+
+        }
+    }
+}

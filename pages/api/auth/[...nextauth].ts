@@ -1,25 +1,33 @@
-import NextAuth, { Account, Profile, Session, User } from "next-auth";
-import { AdapterUser } from "next-auth/adapters";
+import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-import { JWT } from "next-auth/jwt";
 import GithubProvider from "next-auth/providers/github";
 
 import { checkUserEmailPassword, oAuthToDbUser } from "../../../database";
 
-export const authOptions = {
 
+export const authOptions = {
+    session: {
+        maxAge: 2592000, // 30 dias
+    },
     providers: [
 
         Credentials({
-
             name: 'Custom Login',
             credentials: {
-                email: { label: 'Correo:', type: 'email', placeholder: 'correo@correo.com' },
-                password: { label: 'Contraseña:', type: 'password', placeholder: 'Contraseña' },
+                email: {
+                    label: 'Correo:',
+                    type: 'email',
+                    placeholder: 'correo@correo.com'
+                },
+                password: {
+                    label: 'Contraseña:',
+                    type: 'password',
+                    placeholder: 'Contraseña'
+                },
             },
             async authorize(credentials) {
-
-                return await checkUserEmailPassword(credentials?.email!, credentials?.password!);
+                const { email = '', password = '' } = credentials as { email: string, password: string }
+                return await checkUserEmailPassword(email, password);
             }
         }),
 
@@ -30,8 +38,13 @@ export const authOptions = {
 
     ],
 
+    //* Custom Pages:
+    pages: {
+        signIn: '/auth/login',
+        newRegister: '/auth/register'
+    },
 
-    // CallBacks:
+    //* CallBacks:
     callbacks: {
 
         async jwt({ token, account, user }: { [x: string]: any }) {
@@ -44,7 +57,8 @@ export const authOptions = {
 
                     case 'oauth':
 
-                        const dbuser = await oAuthToDbUser(user.email, user.name);
+                        const { email = '', name = '' } = user;
+                        const dbuser = await oAuthToDbUser(email, name);
                         token.user = dbuser;
 
                         break;
@@ -60,6 +74,7 @@ export const authOptions = {
         },
 
         async session({ session, token }: { [x: string]: any }) {
+
 
             session.access_token = token.access_token;
             session.user = token.user;

@@ -31,7 +31,7 @@ const userRegister = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
     if (firstName.length < 2 || lastName.lenght < 2) {
 
         return res.status(400).json({
-            message: 'El nombre y apellido deben de tener mínimo 6 caracteres'
+            message: 'El nombre y apellido deben de tener mínimo 2 caracteres'
         });
     }
 
@@ -47,7 +47,6 @@ const userRegister = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
             message: 'El email debe de tener un formato valido'
         });
     }
-
 
     try {
 
@@ -68,9 +67,9 @@ const userRegister = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
             newUser.password = bcrypt.hashSync(password, salt);
             newUser.save({ validateBeforeSave: true });
 
-            const token = await jwtGenerator(newUser._id, email);
-
             await db.disconnect();
+
+            const token = await jwtGenerator(newUser._id, email);
 
             return res.status(200).json({
                 token,
@@ -89,9 +88,9 @@ const userRegister = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
             dataBaseUser.state = true;
 
             const updatedUser = await User.findByIdAndUpdate(dataBaseUser._id, dataBaseUser, { new: true });
-            const token = await jwtGenerator(dataBaseUser._id, email);
-
             await db.disconnect();
+
+            const token = await jwtGenerator(dataBaseUser._id, email);
 
             return res.status(200).json({
                 token,
@@ -102,8 +101,6 @@ const userRegister = async (req: NextApiRequest, res: NextApiResponse<Data>) => 
                     role: updatedUser!.role
                 }
             });
-
-
         }
 
         await db.disconnect();
