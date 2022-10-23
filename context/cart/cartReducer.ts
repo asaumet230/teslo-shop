@@ -1,7 +1,7 @@
 
 // Interfaces:
-import { ICartProduct } from '../../interfaces';
-import { CartState, ShippingAddress } from './';
+import { ICartProduct, ShippingAddress } from '../../interfaces';
+import { CartState } from './';
 
 type OrderSumary = {
     numberOfItems: number;
@@ -17,7 +17,8 @@ type CartAction =
     | { type: '[CART] - Updated Product in Cart', payload: ICartProduct[] }
     | { type: '[CART] - Change Cart Quantity', payload: ICartProduct }
     | { type: '[CART] - Remove Product in Cart', payload: ICartProduct }
-    | { type: '[CART] - Update Order Summary', payload: OrderSumary };
+    | { type: '[CART] - Update Order Summary', payload: OrderSumary }
+    | { type: '[CART] - Order Complete' };
 
 
 export const cartReducer = (state: CartState, action: CartAction): CartState => {
@@ -68,6 +69,16 @@ export const cartReducer = (state: CartState, action: CartAction): CartState => 
             return {
                 ...state,
                 ...action.payload
+            }
+
+        case '[CART] - Order Complete':
+            return {
+                ...state,
+                cart: [],
+                numberOfItems: 0,
+                taxRate: 0,
+                subtotal: 0,
+                total: 0
             }
 
         default:

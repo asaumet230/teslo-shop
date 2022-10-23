@@ -1,9 +1,10 @@
-import { useContext, useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import { NextPage, GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
+import { getToken } from 'next-auth/jwt';
 import { getSession } from 'next-auth/react';
-import { Box, Button, Card, CardContent, Divider, Grid, Typography, Link } from '@mui/material';
+import { Box, Button, Card, CardContent, Divider, Grid, Typography, Link, Chip } from '@mui/material';
 
 import { CartContext } from '../../context';
 
@@ -20,21 +21,41 @@ import { countries, isValidToken } from '../../utils';
 
 export const SummaryPage: NextPage = () => {
 
-    const { numberOfItems, shippingAddress } = useContext(CartContext);
+    const { numberOfItems, shippingAddress, createOrder } = useContext(CartContext);
+
+    const [isPosting, setIsPosting] = useState(false);
+    const [hasErrorMessage, setHasErrorMessage] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
 
     const router = useRouter();
 
     useEffect(() => {
 
-        if (numberOfItems <= 0 || !shippingAddress) {
-            router.replace('/');
+        if (!shippingAddress) {
+            router.replace('/checkout/address');
         }
     }, []);
 
-    if (numberOfItems <= 0 || !shippingAddress) return (<FullScreenLoading />);
+    if (!shippingAddress) return (<FullScreenLoading />);
 
-    const { firstName, lastName, address, address2, city, country, state, zip, phone } = shippingAddress;
+    const { firstName, lastName, address, address2, city, country, state, zip, phone } = shippingAddress!;
     const selectedCountry = useMemo(() => countries.find(c => c.code === country), [country]);
+
+    const onCreateOrder = async () => {
+
+        setIsPosting(true);
+        const { hasError, message } = await createOrder();
+
+        if (hasError) {
+            setIsPosting(false);
+            setHasErrorMessage(true);
+            setErrorMessage(message);
+            return;
+        }
+
+
+        router.replace(`/orders/${message}`);
+    }
 
 
     return (
@@ -50,52 +71,71 @@ export const SummaryPage: NextPage = () => {
 
                 <Grid item xs={12} sm={5}>
                     <Card className='summary-card' sx={{ padding: '5px 10px' }}>
-                        <CardContent>
 
-                            <Typography variant='h2' fontWeight={500}>Resumen ({`${numberOfItems}  ${numberOfItems === 1 ? 'Producto' : 'Productos'}`})</Typography>
-                            <Divider sx={{ my: 1 }} />
+                        <form onSubmit={onCreateOrder}>
+                            <CardContent>
 
-                            <Box display='flex' justifyContent='space-between' mt={2}>
-                                <Typography variant='subtitle1'>Dirección de entrega</Typography>
-                                <NextLink href='/checkout/address' passHref>
-                                    <Link underline='always' color='secondary' >
-                                        Editar
-                                    </Link>
-                                </NextLink>
-                            </Box>
+                                <Typography variant='h2' fontWeight={500}>Resumen ({`${numberOfItems}  ${numberOfItems === 1 ? 'Producto' : 'Productos'}`})</Typography>
+                                <Divider sx={{ my: 1 }} />
+
+                                <Box display='flex' justifyContent='space-between' mt={2}>
+                                    <Typography variant='subtitle1'>Dirección de entrega</Typography>
+                                    <NextLink href='/checkout/address' passHref>
+                                        <Link underline='always' color='secondary' >
+                                            Editar
+                                        </Link>
+                                    </NextLink>
+                                </Box>
 
 
-                            <Typography>{`${firstName}  ${lastName}`}</Typography>
-                            <Typography>{`${address} ${address2 ? `, ${address2}` : ''}`}</Typography>
-                            <Typography>{`${city} - ${state}, zip code: ${zip}`}</Typography>
-                            <Typography>{selectedCountry?.name}</Typography>
-                            <Typography mb={2}>{phone}</Typography>
+                                <Typography>{`${firstName}  ${lastName}`}</Typography>
+                                <Typography>{`${address} ${address2 ? `, ${address2}` : ''}`}</Typography>
+                                <Typography>{`${city} - ${state}, zip code: ${zip}`}</Typography>
+                                <Typography>{selectedCountry?.name}</Typography>
+                                <Typography mb={2}>{phone}</Typography>
 
-                            <Divider sx={{ my: 1 }} />
+                                <Divider sx={{ my: 1 }} />
 
-                            <Box display='block' textAlign='end'>
-                                <NextLink href='/cart' passHref>
-                                    <Link underline='always' color='secondary' >
-                                        Editar
-                                    </Link>
-                                </NextLink>
-                            </Box>
+                                <Box display='block' textAlign='end'>
+                                    <NextLink href='/cart' passHref>
+                                        <Link underline='always' color='secondary' >
+                                            Editar
+                                        </Link>
+                                    </NextLink>
+                                </Box>
 
-                            <OrderSummary />
+                                <OrderSummary />
 
-                            <Box sx={{ mt: 3 }}>
-                                <Button color='secondary' className='circular-btn' fullWidth>
-                                    Confirmar Orden
-                                </Button>
-                            </Box>
+                                <Box sx={{ mt: 3 }} display="flex" flexDirection="column">
+                                    <Button
+                                        disabled={isPosting}
+                                        onClick={onCreateOrder}
+                                        color='secondary'
+                                        className='circular-btn'
+                                        fullWidth>
+                                        Confirmar Orden
+                                    </Button>
 
-                        </CardContent>
+                                    {
+                                        hasErrorMessage && (
+                                            <Chip
+                                                color="error"
+                                                label={errorMessage}
+                                                sx={{ display: errorMessage ? 'flex' : 'none', mt: 1 }}
+                                            />
+                                        )
+                                    }
+
+                                </Box>
+
+                            </CardContent>
+                        </form>
                     </Card>
                 </Grid>
 
-            </Grid>
+            </Grid >
 
-        </ShopLayout>
+        </ShopLayout >
     )
 }
 

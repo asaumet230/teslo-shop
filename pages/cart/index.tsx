@@ -30,11 +30,11 @@ export const CartPage: NextPage = () => {
 
     const onCheckout = () => {
 
-        const token = Cookies.get('token');
+        // const token = Cookies.get('token');
 
-        if (!token) {
-            router.replace('/auth/login?p=/cart');
-        }
+        // if (!token) {
+        //     router.replace('/auth/login?p=/cart');
+        // }
 
         router.replace('/checkout/address');
 

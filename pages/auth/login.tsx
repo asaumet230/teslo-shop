@@ -3,16 +3,17 @@ import { NextPage, GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import NextLink from 'next/link';
 import { useForm } from "react-hook-form";
-import { getSession, signIn } from 'next-auth/react';
+import { getSession, signIn, getProviders } from 'next-auth/react';
 
 // MUI:
-import { Box, Grid, TextField, Typography, Button, Link, InputAdornment, IconButton, Chip } from '@mui/material';
+import { Box, Grid, TextField, Typography, Button, Link, InputAdornment, IconButton, Chip, Divider } from '@mui/material';
 
 // Icons:
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import AccountCircleRounded from '@mui/icons-material/AccountCircleRounded';
 import ErrorOutline from '@mui/icons-material/ErrorOutline';
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 import { AuthContext } from '../../context';
 import { AuthLayout } from '../../components/layouts';
@@ -38,7 +39,22 @@ const LoginPage: NextPage = () => {
     const [showError, setShowError] = useState(false);
     const [showErrorMessage, setShowErrorMessage] = useState('');
 
+    const [providers, setProviders] = useState<any>([]);
+
     const router = useRouter();
+
+    useEffect(() => {
+
+        getProviders().then(prov => {
+
+            if (prov) {
+                const providers = Object.values(prov);
+                setProviders(providers);
+            }
+        });
+
+    }, []);
+
 
     // useEffect(() => {
 
@@ -189,6 +205,33 @@ const LoginPage: NextPage = () => {
                                     ¿No tienes cuenta?
                                 </Link>
                             </NextLink>
+                        </Grid>
+
+                        <Grid item xs={12}>
+                            <Divider sx={{ width: '100%', mt: 2 }} />
+                            <Typography mt={2}> Ingresa con redes sociales:</Typography>
+                            {
+                                providers.map((prov: any) => {
+
+                                    if (prov.name !== 'Custom Login') {
+
+                                        return (
+                                            <Button
+                                                key={prov.id}
+                                                variant='outlined'
+                                                fullWidth
+                                                color="primary"
+                                                sx={{ mt: 3 }}
+                                                startIcon={<GitHubIcon />}
+                                                onClick={() => signIn(prov.id)}
+                                            >
+                                                {prov.name}
+                                            </Button>
+                                        )
+                                    }
+
+                                })
+                            }
                         </Grid>
 
                     </Grid>

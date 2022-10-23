@@ -1,5 +1,7 @@
-import { NextPage } from 'next';
+import { useMemo } from 'react';
+import { NextPage, GetServerSideProps } from 'next';
 import NextLink from 'next/link';
+import { getSession } from 'next-auth/react';
 
 // MUI:
 import { Box, Card, CardContent, Divider, Grid, Typography, Link, Chip } from '@mui/material';
@@ -14,83 +16,90 @@ import { ShopLayout } from '../../components/layouts';
 // Components:
 import { CartList, OrderSummary } from '../../components/cart';
 
+import { getOrderById } from '../../database/dbOrders';
+
+import { IOrder } from '../../interfaces';
+import { countries } from '../../utils';
 
 
-export const OrderPage: NextPage = () => {
+interface Props {
+    order: IOrder;
+}
+
+export const OrderPage: NextPage<Props> = ({ order }) => {
+
+
+    const { numberOfItems, subtotal, total, taxRate, _id, shippingAddress, isPaid, orderItems } = order;
+    const { firstName, lastName, address, address2, city, country, zip, state, phone } = shippingAddress;
+
+    const orderPropsValues = { numberOfItems, subtotal, taxRate, total };
+    const selectedCountry = useMemo(() => countries.find(c => c.code === country), [country]);
 
     return (
         <ShopLayout title='Orden No: 12343536' pageDescription='Orden No: 12343536'>
 
-            <Typography variant='h1' component='h1' sx={{ mb: 4, textAlign: 'center' }}>Orden No: 12343536</Typography>
+            <Typography variant='h1' component='h1' sx={{ mb: 4, textAlign: 'center' }}>Orden No: {_id}</Typography>
 
-            {/* <Chip
-                sx={{ my: 2 }}
-                label='Pendiente de pago'
-                variant='outlined'
-                color='error'
-                icon={<CreditCardOffOutlined />}
-            /> */}
+            {
 
-            <Chip
-                sx={{ my: 2 }}
-                label='Orden Pagada'
-                variant='outlined'
-                color='success'
-                icon={<CreditScoreOutlined />}
-            />
+                !isPaid ?
+                    (<Chip
+                        sx={{ my: 2 }}
+                        label='Pendiente de pago'
+                        variant='outlined'
+                        color='error'
+                        icon={<CreditCardOffOutlined />}
+                    />) : (
 
+                        <Chip
+                            sx={{ my: 2 }}
+                            label='Orden Pagada'
+                            variant='outlined'
+                            color='success'
+                            icon={<CreditScoreOutlined />}
+                        />
+                    )
+            }
 
             <Grid container spacing={3}>
 
                 <Grid item xs={12} sm={7}>
-                    <CartList />
+                    <CartList products={orderItems} />
                 </Grid>
 
                 <Grid item xs={12} sm={5}>
                     <Card className='summary-card' sx={{ padding: '5px 10px' }}>
                         <CardContent>
 
-                            <Typography variant='h2' fontWeight={500}>Resumen (3 productos)</Typography>
+                            <Typography variant='h2' fontWeight={500}>{numberOfItems > 1 ? (`Resumen: (${numberOfItems} productos)`) : (`Resumen: (${numberOfItems} producto)`)}</Typography>
                             <Divider sx={{ my: 1 }} />
 
-                            <Box display='flex' justifyContent='space-between' mt={2}>
-                                <Typography variant='subtitle1'>Dirección de entrega</Typography>
-                                <NextLink href='/checkout/address' passHref>
-                                    <Link underline='always' color='secondary' >
-                                        Editar
-                                    </Link>
-                                </NextLink>
-                            </Box>
-
-
-                            <Typography>Andres Felipe Saumet</Typography>
-                            <Typography>Calle 26 No 2A-36</Typography>
-                            <Typography>Santa Marta - Magdalena, zip 470006</Typography>
-                            <Typography>Colombia</Typography>
-                            <Typography mb={2}>+605-3017826682</Typography>
+                            <Typography sx={{ textTransform: 'capitalize' }}>{`${firstName} ${lastName}`}</Typography>
+                            <Typography sx={{ textTransform: 'capitalize' }}>{address2 ? `${address}, ${address2}` : `${address}`}</Typography>
+                            <Typography sx={{ textTransform: 'capitalize' }}>{`${city} - ${state}, zip ${zip}`}</Typography>
+                            <Typography sx={{ textTransform: 'capitalize' }}>{selectedCountry?.name}</Typography>
+                            <Typography mb={2} sx={{ textTransform: 'capitalize' }}>{phone}</Typography>
 
                             <Divider sx={{ my: 1 }} />
 
-                            <Box display='block' textAlign='end'>
-                                <NextLink href='/cart' passHref>
-                                    <Link underline='always' color='secondary' >
-                                        Editar
-                                    </Link>
-                                </NextLink>
-                            </Box>
+                            <OrderSummary orderPropsValues={orderPropsValues} />
 
-                            <OrderSummary />
+                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 3 }}>
+                                {
+                                    isPaid ?
+                                        (
+                                            <Chip
+                                                sx={{ my: 2 }}
+                                                label='Orden Pagada'
+                                                variant='outlined'
+                                                color='success'
+                                                icon={<CreditScoreOutlined />}
+                                            />
+                                        ) : (
+                                            <h1>Pagar</h1>
+                                        )
+                                }
 
-                            <Box sx={{ mt: 3 }}>
-                                {/* TODO */}
-                                <h1>Pagar</h1>
-                                <Chip
-                                    sx={{ my: 2 }}
-                                    label='Orden Pagada'
-                                    variant='outlined'
-                                    color='success'
-                                    icon={<CreditScoreOutlined />}
-                                />
                             </Box>
 
                         </CardContent>
@@ -104,3 +113,49 @@ export const OrderPage: NextPage = () => {
 }
 
 export default OrderPage;
+
+
+// You should use getServerSideProps when:
+// - Only if you need to pre-render a page whose data must be fetched at request time
+
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+
+    const { id = '' } = query as { id: string };
+    const session: any = await getSession({ req });
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: `/auth/login?p=/orders/${id}`,
+                permanent: false
+            }
+        }
+    }
+
+    const order = await getOrderById(id);
+
+    if (!order) {
+        return {
+            redirect: {
+                destination: '/orders/history',
+                permanent: false
+            }
+        }
+    }
+
+    if (order.user !== session.user.id) {
+        return {
+            redirect: {
+                destination: '/orders/history',
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: {
+            order
+        }
+    }
+}

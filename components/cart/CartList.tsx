@@ -11,7 +11,7 @@ import { CartContext } from '../../context';
 import { ItemCounter } from '../ui';
 
 // Interfaces:
-import { ICartProduct } from '../../interfaces';
+import { ICartProduct, IOrderItem } from '../../interfaces';
 
 // Test Data:
 //import { initialData } from '../../database/products';
@@ -25,10 +25,11 @@ import { ICartProduct } from '../../interfaces';
 
 interface Props {
     editable?: boolean;
+    products?: IOrderItem[];
 }
 
 
-export const CartList: FC<Props> = ({ editable = false }) => {
+export const CartList: FC<Props> = ({ editable = false, products }) => {
 
     const { cart, updateCartQuantity, removeCartProduct } = useContext(CartContext);
 
@@ -42,11 +43,12 @@ export const CartList: FC<Props> = ({ editable = false }) => {
         removeCartProduct(product);
     }
 
+    const productsToShow = products ? products : cart;
 
     return (
         <>
             {
-                cart.map(product => (
+                (productsToShow as ICartProduct[]).map(product => (
 
                     <Grid container spacing={2} key={product.slug + product.size} sx={{ mb: 1 }}>
 

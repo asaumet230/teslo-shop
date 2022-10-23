@@ -1,8 +1,9 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { NextPage, GetServerSideProps } from 'next';
 import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/react';
+import { getToken } from 'next-auth/jwt';
 import { useForm } from 'react-hook-form';
 
 import { CartContext } from '../../context';
@@ -11,9 +12,9 @@ import { Box, Button, FormControl, Grid, MenuItem, Select, TextField, Typography
 
 // Layout:
 import { ShopLayout } from '../../components/layouts';
+import { FullScreenLoading } from '../../components/ui';
 
 import { countries, isValidToken } from '../../utils';
-
 
 
 
@@ -49,7 +50,7 @@ const getAddressFormCookies = (): FormData => {
 
 export const AddressPage: NextPage = () => {
 
-    const { updatedShippingAddress } = useContext(CartContext);
+    const { updatedShippingAddress, numberOfItems } = useContext(CartContext);
 
 
     const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
@@ -65,6 +66,15 @@ export const AddressPage: NextPage = () => {
         router.push('/checkout/summary');
     }
 
+    useEffect(() => {
+
+        if (numberOfItems <= 0) {
+            router.replace('/cart/empty');
+        }
+
+    }, []);
+
+    if (numberOfItems <= 0) return (<FullScreenLoading />);
 
     return (
 
