@@ -11,8 +11,8 @@ import ConfirmationNumberOutlined from '@mui/icons-material/ConfirmationNumberOu
 import CreditCardOffOutlined from '@mui/icons-material/CreditCardOffOutlined';
 import CreditScoreOutlined from '@mui/icons-material/CreditScoreOutlined';
 
-import { AdminLayout } from '../../components/layouts';
-import { IOrder, IUser } from '../../interfaces';
+import { AdminLayout } from '../../../components/layouts';
+import { IOrder, IUser } from '../../../interfaces';
 
 
 
