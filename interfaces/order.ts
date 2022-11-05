@@ -2,7 +2,7 @@ import { IUser, ISize } from "./";
 
 export interface IOrder {
     _id?: string;
-    user?: IUser | string;
+    user: IUser | string;
     orderItems: IOrderItem[];
     shippingAddress: ShippingAddress;
     paymentResult?: string;
@@ -12,6 +12,8 @@ export interface IOrder {
     total: number;
     isPaid: boolean;
     paidAt?: string;
+    transactionID?: string;
+    createdAt?: string
 }
 
 export interface IOrderItem {

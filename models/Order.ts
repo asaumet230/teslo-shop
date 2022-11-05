@@ -8,7 +8,7 @@ const OrderSchema = new Schema({
 
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'Users',
+        ref: 'User',
         required: true
     },
     orderItems: [
@@ -42,8 +42,7 @@ const OrderSchema = new Schema({
     isPaid: { type: Boolean, required: true, default: true },
     paidAt: { type: String },
 
-
-
+    transactionID: { type: String }
 
 }, {
     timestamps: true //* Esto agrega las fechas de creación y actualización en mongo

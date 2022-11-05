@@ -16,7 +16,6 @@ export const Footer: FC = () => {
             sx={{
                 padding: '20px 30px',
                 borderTop: '1px solid #f2f2f2',
-                position: 'absolute',
                 width: '100%'
             }}
         >

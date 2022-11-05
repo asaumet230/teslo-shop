@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 import { db } from '../../database';
 
 // Models:
-import { Product, User } from '../../models';
+import { Order, Product, User } from '../../models';
 
 // Datat to insert in DB:
 import { initialData as seedData } from '../../database';
@@ -37,7 +37,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<HandlerProps>) 
 
         await User.insertMany(encryptedPasswordUsers);
 
+        await Order.deleteMany(); // Este metodo borra todo el contenido de la colección de la DB.
         await Product.deleteMany(); // Este metodo borra todo el contenido de la colección de la DB.
+
         await Product.insertMany(seedData.products); // Este metodo inserta muchos datos a la colección Product en la DB.
 
         await db.disconnect();

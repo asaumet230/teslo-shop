@@ -1,10 +1,11 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { NextPage, GetServerSideProps } from 'next';
-import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/react';
+import { PayPalButtons } from '@paypal/react-paypal-js';
 
 // MUI:
-import { Box, Card, CardContent, Divider, Grid, Typography, Link, Chip } from '@mui/material';
+import { Box, Card, CardContent, Divider, Grid, Typography, Link, Chip, CircularProgress } from '@mui/material';
 
 // Icons:
 import CreditCardOffOutlined from '@mui/icons-material/CreditCardOffOutlined';
@@ -20,14 +21,28 @@ import { getOrderById } from '../../database/dbOrders';
 
 import { IOrder } from '../../interfaces';
 import { countries } from '../../utils';
+import { tesloApi } from '../../api';
 
 
 interface Props {
     order: IOrder;
+    id: string;
 }
 
-export const OrderPage: NextPage<Props> = ({ order }) => {
+interface OrderResponseBody {
+    id: string;
+    status:
+    | "COMPLETED"
+    | "SAVED"
+    | "APPROVED"
+    | "VOIDED"
+    | "PAYER_ACTION_REQUIRED";
+}
 
+export const OrderPage: NextPage<Props> = ({ order, id }) => {
+
+    const [isPaying, setIsPaying] = useState(false);
+    const router = useRouter();
 
     const { numberOfItems, subtotal, total, taxRate, _id, shippingAddress, isPaid, orderItems } = order;
     const { firstName, lastName, address, address2, city, country, zip, state, phone } = shippingAddress;
@@ -35,8 +50,36 @@ export const OrderPage: NextPage<Props> = ({ order }) => {
     const orderPropsValues = { numberOfItems, subtotal, taxRate, total };
     const selectedCountry = useMemo(() => countries.find(c => c.code === country), [country]);
 
+
+    const onOrderCompleted = async (details: OrderResponseBody) => {
+
+        if (details.status !== 'COMPLETED') {
+            return alert('No hay pago en paypal');
+        }
+
+        setIsPaying(true);
+
+        try {
+
+            const { data } = await tesloApi.post('/orders/pay', {
+                transactionId: details.id,
+                orderId: order._id,
+                userId: id
+            });
+
+            console.log({ data });
+
+            router.reload();
+
+        } catch (error) {
+            setIsPaying(false);
+            console.log(error);
+            alert('Error!');
+        }
+    }
+
     return (
-        <ShopLayout title='Orden No: 12343536' pageDescription='Orden No: 12343536'>
+        <ShopLayout title={`Orden No: ${_id}`} pageDescription={`Estado de la orden No: ${_id}`} >
 
             <Typography variant='h1' component='h1' sx={{ mb: 4, textAlign: 'center' }}>Orden No: {_id}</Typography>
 
@@ -84,21 +127,52 @@ export const OrderPage: NextPage<Props> = ({ order }) => {
 
                             <OrderSummary orderPropsValues={orderPropsValues} />
 
-                            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mt: 3 }}>
-                                {
-                                    isPaid ?
-                                        (
-                                            <Chip
-                                                sx={{ my: 2 }}
-                                                label='Orden Pagada'
-                                                variant='outlined'
-                                                color='success'
-                                                icon={<CreditScoreOutlined />}
-                                            />
-                                        ) : (
-                                            <h1>Pagar</h1>
-                                        )
-                                }
+                            <Box sx={{ display: 'block', mt: 3, width: '100%' }}>
+
+                                <Box
+                                    display="flex"
+                                    justifyContent="center"
+                                    alignItems="center"
+                                    sx={{ display: isPaying ? 'flex' : 'none' }}>
+                                    <CircularProgress />
+                                </Box>
+
+
+                                <Box sx={{ display: isPaying ? 'none' : 'block' }}>
+                                    {
+                                        isPaid ?
+                                            (
+                                                <Chip
+                                                    sx={{ my: 2 }}
+                                                    label='Orden Pagada'
+                                                    variant='outlined'
+                                                    color='success'
+                                                    icon={<CreditScoreOutlined />}
+                                                />
+                                            ) : (
+                                                <PayPalButtons
+
+                                                    createOrder={(data, actions) => {
+                                                        return actions.order.create({
+                                                            purchase_units: [
+                                                                {
+                                                                    amount: {
+                                                                        value: total.toString(),
+                                                                    },
+                                                                },
+                                                            ],
+                                                        });
+                                                    }}
+                                                    onApprove={(data, actions) => {
+                                                        return actions.order!.capture().then((details) => {
+                                                            onOrderCompleted(details);
+                                                        });
+                                                    }}
+                                                />
+                                            )
+                                    }
+                                </Box>
+
 
                             </Box>
 
@@ -108,7 +182,7 @@ export const OrderPage: NextPage<Props> = ({ order }) => {
 
             </Grid>
 
-        </ShopLayout>
+        </ShopLayout >
     )
 }
 
@@ -123,6 +197,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
     const { id = '' } = query as { id: string };
     const session: any = await getSession({ req });
+    console.log(session);
 
     if (!session) {
         return {
@@ -155,7 +230,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, query }) => 
 
     return {
         props: {
-            order
+            order,
+            id: session.user.id
         }
     }
 }
