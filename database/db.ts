@@ -38,7 +38,7 @@ export const connect = async () => {
 
 export const disconnect = async () => {
 
-    if (process.env.NODE_ENV === 'production') return; // si estoy en desarrollo no me desconecto;
+    if (process.env.NODE_ENV === 'production' || process.env.NODE_ENV === 'development') return;
 
     if (mongoConnection.isConnected === 0) return;
 
