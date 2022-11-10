@@ -72,7 +72,7 @@ export const AddressPage: NextPage = () => {
             router.replace('/cart/empty');
         }
 
-    }, []);
+    }, [router, numberOfItems]);
 
     if (numberOfItems <= 0) return (<FullScreenLoading />);
 

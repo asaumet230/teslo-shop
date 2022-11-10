@@ -39,7 +39,7 @@ interface Props {
     product: IProducts
 }
 
-export const slug: NextPage<Props> = ({ product }) => {
+export const Slug: NextPage<Props> = ({ product }) => {
 
     /* //? Esto no se debe hacer porque los boots de google o otro buscador ven un loading o un mensaje, no ven el SEO esto se puede hacer en React puro o en una SPA cuando no importa el SEO.
         const router = useRouter();
@@ -147,7 +147,7 @@ export const slug: NextPage<Props> = ({ product }) => {
     )
 }
 
-export default slug;
+export default Slug;
 
 //* No usas SSR
 // export const getServerSideProps: GetServerSideProps = async ({ params }) => {

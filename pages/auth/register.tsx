@@ -56,7 +56,7 @@ const RegisterPage: NextPage = () => {
                 startAuth();
             }, 3000);
         }
-    }, [isErrorLogged, errorMessage]);
+    }, [isErrorLogged, errorMessage, startAuth]);
 
 
     const onUserRegister = async ({ firstName, lastName, email, password }: FormData) => {

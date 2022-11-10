@@ -20,7 +20,7 @@ export const ProductSlideShow: FC<Props> = ({ images }) => {
             {
                 images.map(image => {
 
-                    const url = `/products/${image}`;
+                    const url = image.includes('https') ? image : `/products/${image}`;
 
                     return (
                         <div className={styles['each-slide']} key={image}>

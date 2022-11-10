@@ -22,24 +22,24 @@ import { countries, isValidToken } from '../../utils';
 export const SummaryPage: NextPage = () => {
 
     const { numberOfItems, shippingAddress, createOrder } = useContext(CartContext);
+    const { firstName, lastName, address, address2, city, country, state, zip, phone } = shippingAddress!;
 
     const [isPosting, setIsPosting] = useState(false);
     const [hasErrorMessage, setHasErrorMessage] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
 
     const router = useRouter();
+    const selectedCountry = useMemo(() => countries.find(c => c.code === country), [country]);
 
     useEffect(() => {
 
         if (!shippingAddress) {
             router.replace('/checkout/address');
         }
-    }, []);
+    }, [router, shippingAddress]);
 
     if (!shippingAddress) return (<FullScreenLoading />);
 
-    const { firstName, lastName, address, address2, city, country, state, zip, phone } = shippingAddress!;
-    const selectedCountry = useMemo(() => countries.find(c => c.code === country), [country]);
 
     const onCreateOrder = async () => {
 

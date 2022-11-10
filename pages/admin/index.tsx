@@ -39,7 +39,7 @@ const DashboardPage: NextPage = () => {
 
         return () => clearInterval(ref.current);
 
-    }, [ref.current]);
+    }, []);
 
 
     if (!data && !error) {

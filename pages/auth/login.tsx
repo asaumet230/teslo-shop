@@ -15,7 +15,7 @@ import AccountCircleRounded from '@mui/icons-material/AccountCircleRounded';
 import ErrorOutline from '@mui/icons-material/ErrorOutline';
 import GitHubIcon from '@mui/icons-material/GitHub';
 
-import { AuthContext } from '../../context';
+// import { AuthContext } from '../../context';
 import { AuthLayout } from '../../components/layouts';
 import { isEmail } from '../../utils/validations';
 

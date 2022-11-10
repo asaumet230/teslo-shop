@@ -33,7 +33,7 @@ const handler = (req: NextApiRequest, res: NextApiResponse<handlerProps>) => {
 const getProducts = async (req: NextApiRequest, res: NextApiResponse) => {
 
     const { validGenders } = SHOP_CONSTANTS;
-    const { limit = 52, since = 0, gender } = req.query;
+    const { limit = 100, since = 0, gender } = req.query;
 
     try {
 

@@ -7,7 +7,8 @@ const ProductSchema = new Schema({
 
     description: {
         type: String,
-        require: [true, 'El campor es requerido']
+        require: [true, 'El campor es requerido'],
+        default: ''
     },
     images: [
         {
@@ -28,13 +29,14 @@ const ProductSchema = new Schema({
         {
             type: String,
             enum: { values: ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL'] }, //* Lo puedes relacionar con otra tabla eso seria lo correcto
-            message: '{VALUE} no es una talla válido'
+            message: '{VALUE} no es una talla válido',
         }
     ],
     slug: {
         type: String,
         require: [true, 'El campor es requerido'],
-        unique: true
+        unique: true,
+        default: ''
     },
     tags: [
         {
@@ -44,18 +46,21 @@ const ProductSchema = new Schema({
     title: {
         type: String,
         require: [true, 'El campor es requerido'],
+        default: '',
     },
     type: {
         type: String,
         require: [true, 'El campor es requerido'],
         enum: { values: ['shirts', 'pants', 'hoodies', 'hats'] },
-        message: '{VALUE} no es un tipo válido'
+        message: '{VALUE} no es un tipo válido',
+        default: 'shirts'
     },
     gender: {
         type: String,
         require: [true, 'El campor es requerido'],
         enum: { values: ['men', 'women', 'kid', 'unisex'] },
-        message: '{VALUE} no es un genero válido'
+        message: '{VALUE} no es un genero válido',
+        default: 'men'
     },
 
 }, {

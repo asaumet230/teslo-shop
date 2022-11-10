@@ -63,7 +63,7 @@ const columns: GridColDef[] = [
 ];
 
 
-const ordersPage: NextPage = () => {
+const OrdersPage: NextPage = () => {
 
 
     const { data, error } = useSWR<IOrder[]>('/api/admin/orders');
@@ -108,7 +108,7 @@ const ordersPage: NextPage = () => {
     )
 }
 
-export default ordersPage;
+export default OrdersPage;
 
 
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
