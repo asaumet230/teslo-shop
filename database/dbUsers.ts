@@ -21,13 +21,16 @@ export const checkUserEmailPassword = async (email: string, password: string) =>
 
     const { _id, firstName, lastName, role } = user;
 
-    return {
+    const userInformation = {
         id: _id,
         email,
         firstName,
         lastName,
         role,
     }
+
+
+    return JSON.parse(JSON.stringify(userInformation));
 
 
 
@@ -56,13 +59,15 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
 
         const { _id, email, firstName, lastName, role } = newUser;
 
-        return {
+        const newUserInfo = {
             id: _id,
             email,
             firstName,
             lastName,
             role
         }
+
+        return JSON.parse(JSON.stringify(newUserInfo));
     }
 
     if (user.state === false) {
@@ -73,23 +78,28 @@ export const oAuthToDbUser = async (oAuthEmail: string, oAuthName: string) => {
 
         const { _id, email, firstName, lastName, role } = user;
 
-        return {
+        const activateUser = {
             id: _id,
             email,
             firstName,
             lastName,
             role
         }
+
+        return JSON.parse(JSON.stringify(activateUser));
     }
 
     await db.disconnect();
+
     const { _id, email, firstName, lastName, role } = user;
 
-    return {
+    const userInfo = {
         id: _id,
         email,
         firstName,
         lastName,
         role
     }
+
+    return JSON.parse(JSON.stringify(userInfo));
 }
