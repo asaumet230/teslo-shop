@@ -12,7 +12,7 @@ import PeopleOutline from '@mui/icons-material/PeopleOutline';
 
 import { AdminLayout } from '../../components/layouts';
 import { IUser } from '../../interfaces';
-import { tesloApi } from '../../api';
+import { tesloApi } from '../../config';
 
 
 

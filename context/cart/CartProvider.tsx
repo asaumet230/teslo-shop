@@ -7,7 +7,7 @@ import { CartContext, cartReducer } from './';
 // Interfaces:
 import { ICartProduct, IOrder, ShippingAddress } from '../../interfaces';
 
-import { tesloApi } from '../../api';
+import { tesloApi } from '../../config';
 import axios from 'axios';
 
 

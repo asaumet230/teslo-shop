@@ -1,4 +1,4 @@
-import { tesloApi } from "../api"
+import { tesloApi } from "../config"
 
 type Data =
     | {

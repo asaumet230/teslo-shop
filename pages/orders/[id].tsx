@@ -21,7 +21,7 @@ import { getOrderById } from '../../database/dbOrders';
 
 import { IOrder } from '../../interfaces';
 import { countries } from '../../utils';
-import { tesloApi } from '../../api';
+import { tesloApi } from '../../config';
 
 
 interface Props {
