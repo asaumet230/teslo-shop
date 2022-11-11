@@ -12,6 +12,7 @@ import EscalatorWarningOutlined from '@mui/icons-material/EscalatorWarningOutlin
 import FemaleOutlined from '@mui/icons-material/FemaleOutlined';
 import LoginOutlined from '@mui/icons-material/LoginOutlined';
 import MaleOutlined from '@mui/icons-material/MaleOutlined';
+import PersonAddAltOutlinedIcon from '@mui/icons-material/PersonAddAltOutlined';
 import SearchOutlined from '@mui/icons-material/SearchOutlined';
 import VpnKeyOutline from '@mui/icons-material/VpnKeyOutlined';
 
@@ -119,15 +120,29 @@ export const SideMenu = () => {
 
                     {!isLoggedIn ?
                         (
-                            <ListItem
-                                button
-                                onClick={() => navigateTo(`/auth/login?p=${router.asPath}`)}
-                            >
-                                <ListItemIcon>
-                                    <VpnKeyOutline />
-                                </ListItemIcon>
-                                <ListItemText primary={'Ingresar'} />
-                            </ListItem>
+                            <>
+                                <ListItem
+                                    button
+                                    onClick={() => navigateTo(`/auth/login?p=${router.asPath}`)}
+                                >
+                                    <ListItemIcon>
+                                        <VpnKeyOutline />
+                                    </ListItemIcon>
+                                    <ListItemText primary={'Ingresar'} />
+                                </ListItem>
+
+                                <ListItem
+                                    button
+                                    onClick={() => navigateTo('/auth/register')}
+                                >
+                                    <ListItemIcon>
+                                        <PersonAddAltOutlinedIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={'Registarse'} />
+                                </ListItem>
+
+
+                            </>
                         ) :
                         (
                             <ListItem button onClick={logout}>

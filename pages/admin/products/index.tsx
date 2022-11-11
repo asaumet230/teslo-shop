@@ -7,8 +7,9 @@ import { getSession } from 'next-auth/react';
 import { CardMedia, Grid, Link, Typography, Box, Button } from '@mui/material';
 import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import CategoryOutlined from '@mui/icons-material/CategoryOutlined';
 import AddBoxOutlined from '@mui/icons-material/AddBoxOutlined';
+import CategoryOutlined from '@mui/icons-material/CategoryOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 import { AdminLayout } from '../../../components/layouts';
 import { IProducts } from '../../../interfaces';
@@ -37,8 +38,8 @@ const columns: GridColDef[] = [
         width: 300,
         renderCell: ({ row }: GridRenderCellParams) => {
             return (
-                <NextLink href={`/admin/products/${row.slug}`} passHref>
-                    <Link underline='always'>
+                <NextLink href={`/product/${row.slug}`} passHref>
+                    <Link underline='always' target='_blank' rel='noreferrer'>
                         {row.title}
                     </Link>
                 </NextLink>
@@ -50,6 +51,24 @@ const columns: GridColDef[] = [
     { field: 'inStock', headerName: 'Inventario' },
     { field: 'price', headerName: 'Precio' },
     { field: 'sizes', headerName: 'Tallas', width: 250 },
+    {
+        field: 'edit',
+        headerName: 'Editar',
+        width: 300,
+        renderCell: ({ row }: GridRenderCellParams) => {
+            return (
+                <NextLink href={`/ admin / products / ${row.slug}`} passHref>
+                    <Link underline='none'>
+                        <Button
+                            endIcon={<EditOutlinedIcon />}
+                            sx={{ backgroundColor: '#e2e2e2' }}>
+                            Editar
+                        </Button>
+                    </Link>
+                </NextLink>
+            )
+        }
+    }
 ];
 
 
@@ -81,7 +100,7 @@ const ProductsPage: NextPage = () => {
 
     return (
         <AdminLayout
-            title={`Productos ${data?.length}`}
+            title={`Productos ${data?.length} `}
             subTitle='Mantenimiento de productos'
             icon={<CategoryOutlined />}>
 
