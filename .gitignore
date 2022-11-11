@@ -3,6 +3,8 @@
 # directories:
 mongo/
 .env
+.env.development
+.env.production
 
 # dependencies
 /node_modules
